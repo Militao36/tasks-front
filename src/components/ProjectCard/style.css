@@ -5,8 +5,8 @@
 }
 
 .card:hover{
-  border: 1px solid rgb(70, 70, 70);
-  transition: 0.5s;
+  box-shadow: 0 0.200rem 0.25rem rgba(0, 0, 0, 0.1) !important;
+  transition: 0.2s;
 }
 
 .c-details span {

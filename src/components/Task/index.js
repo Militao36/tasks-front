@@ -1,6 +1,6 @@
 import './style.css'
 
-export function Task({ title, status, labels = [] }) {
+export function Task({ title, time, labels = [] }) {
 
   return (
     <div className="card p-3 mt-2">
@@ -9,16 +9,15 @@ export function Task({ title, status, labels = [] }) {
           <div className="icon"> <i className="fa-solid fa-face-grin-wide"></i> </div>
           <div className="ms-2 c-details">
             <h6 className="mb-0">{title}</h6>
-            <span>{status || "Aguardando"}</span>
+            <span>{time}</span>
           </div>
         </div>
       </div>
       <div className="mt-3">
-        <div className="mt-3 overflow-auto d-flex justify-content-end" style={{ maxHeight: 70 }}>
-          
+        <div className="mt-3 overflow-auto" style={{ maxHeight: 70 }}>
           {labels.map(({ name, color }) => {
             return (
-              <span className={`badge ${color} me-2`}>{name}</span>
+              <span key={name} className={`badge ${color} me-2`}>{name}</span>
             )
           })}
          

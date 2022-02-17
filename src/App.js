@@ -10,6 +10,7 @@ function App() {
           <Task
             title={"Adicionar tela de cliente"}
             status={"Finalizada"}
+            time={"Prazo: 01/02/2022"}
             labels={[
               {
                 name: 'Iniciado',
