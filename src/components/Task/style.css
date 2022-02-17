@@ -1,0 +1,24 @@
+.card {
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.card:hover{
+  border: 1px solid rgb(70, 70, 70);
+  transition: 0.5s;
+}
+
+.c-details span {
+  font-size: 13px
+}
+
+.icon {
+  width: 50px;
+  height: 50px;
+  background-color: #eee;
+  border-radius: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 39px
+}
