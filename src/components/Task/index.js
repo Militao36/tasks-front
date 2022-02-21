@@ -1,9 +1,15 @@
 import './style.css'
 
-export function Task({ title, time, labels = [] }) {
+const style = {
+  card: {
+    cursor: "pointer",
+    marginLeft: "2px"
+  }
+}
 
+export function Task({ title, time, labels = [] }) {
   return (
-    <div className="card p-3 mt-2">
+    <div className="card p-3 mt-2" style={style.card}>
       <div className="d-flex justify-content-between">
         <div className="d-flex flex-row align-items-center">
           <div className="icon"> <i className="fa-solid fa-face-grin-wide"></i> </div>
@@ -20,7 +26,7 @@ export function Task({ title, time, labels = [] }) {
               <span key={name} className={`badge ${color} me-2`}>{name}</span>
             )
           })}
-         
+
         </div>
       </div>
     </div>
