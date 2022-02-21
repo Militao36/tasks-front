@@ -2,7 +2,7 @@ import './style.css'
 
 export function Project({ time, setor, title, porcetagem }) {
   return (
-    <div className="card mt-4" style={{ height: "75vh" }}>
+    <div className="card mt-4" style={{ height: "63.4vh" }}>
       <div className="card-header">
         Projects
       </div>

@@ -1,34 +1,29 @@
 import './style.css'
 
-const style = {
-  card: {
-    cursor: "pointer",
-    marginLeft: "2px"
-  }
-}
-
-export function Task({ title, time, labels = [] }) {
+export function Task({ title, time, labels = [], border = "5px solid #212529" }) {
   return (
-    <div className="card p-3 mt-2" style={style.card}>
-      <div className="d-flex justify-content-between">
-        <div className="d-flex flex-row align-items-center">
-          <div className="icon"> <i className="fa-solid fa-face-grin-wide"></i> </div>
-          <div className="ms-2 c-details">
-            <h6 className="mb-0">{title}</h6>
-            <span>{time}</span>
-          </div>
-        </div>
+    <div
+      className="card p-3" style={{
+        marginLeft: "2px",
+        backgroundColor: '#f8f9fa',
+        borderTop: border
+      }}
+    >
+      <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
+        <h6>Matheus</h6>
+        <i className="fas fa-pen" style={{ cursor: "pointer", }}></i>
       </div>
-      <div className="mt-3">
-        <div className="mt-3 overflow-auto" style={{ maxHeight: 70 }}>
-          {labels.map(({ name, color }) => {
-            return (
-              <span key={name} className={`badge ${color} me-2`}>{name}</span>
-            )
-          })}
+      <div>
+        <h6 className="mb-0 mt-1" style={{ fontSize: 14 }}>
+          {title}
+        </h6>
+        <div className='d-flex justify-content-between mt-2' >
+          <a href="/" style={{ textDecoration: 'none', fontSize: 12, color: 'black' }}>{time}</a>
+          <a href="/" style={{ textDecoration: 'none', fontSize: 12 }}>#3</a>
+        </div>
 
-        </div>
       </div>
+
     </div>
   )
 }
