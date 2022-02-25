@@ -14,3 +14,7 @@ code {
 p {
   margin: 0;
 }
+
+.decoratation {
+  text-decoration: none;
+}

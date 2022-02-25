@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Menu } from '../components/Menu'
 import { Task } from '../components/Task';
 
-function PageProject() {
+function PageTasksBoard() {
   const [tasks, setTasks] = useState([])
   const [count, setCount] = useState(0)
 
@@ -188,4 +188,4 @@ function PageProject() {
   );
 }
 
-export default PageProject;
+export default PageTasksBoard;

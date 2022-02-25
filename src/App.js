@@ -1,17 +1,18 @@
 // import { Menu } from './components/Menu'
 // import { Project } from './components/Project';
-import PageProject from './pages/projects';
+// import { Task } from './components/Task';
+import { TaskEdit } from './pages/TaskEdit';
+// import PageTasksBoard from './pages/TasksBoard';
 
 function App() {
 
   return (
-    <PageProject/>
+    <TaskEdit/>
   )
   // return (
   //   <>
   //     <Menu />
   //     <div className="container-fluid mt-2 row" >
-  //       <h2>Dashboard</h2>
   //       <div className='col-sm-10 col-md-8'>
   //         <div className="row d-flex justify-content-evenly">
   //           <div class="card text-white bg-success col-lg-3 mt-2" style={{ height: 100, minWidth: 250 }}>
