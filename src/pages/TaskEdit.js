@@ -92,10 +92,11 @@ export function TaskEdit() {
               </div>
             </div>
             <div className="col-sm-3">
-              <h3 className="text-primary"><i class="fa-brands fa-buffer"></i> Winfit Web</h3>
-              <br />
+              <div className="">
+                <h3 className="bg-success text-light p-3 rounded" ><i class="fa-brands fa-buffer"></i> Winasfit Web</h3>
+              </div>
 
-              <div className="text-muted">
+              <div className="text-muted mt-3">
                 <p className="text-sm">Inicio
                   <b className="d-block">01/02/2022</b>
                 </p>
