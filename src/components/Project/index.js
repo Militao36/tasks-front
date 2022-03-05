@@ -1,8 +1,32 @@
+/* eslint-disable no-unused-vars */
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
+import { api } from '../../config/api'
 import './style.css'
 
 export function Project({ time, setor, title, porcetagem }) {
+  const [projects, setProjects] = useState([])
+
+  useEffect(() => {
+    api.get(`/projects`)
+      .then(({ data }) => {
+        setProjects(data)
+      })
+  }, [])
+
+  function calculatePercentageOfProject(project) {
+    if (!project) {
+      return 0
+    }
+
+    const { tasks_count, tasks_end, tasks_not_end } = project
+    const result = (tasks_end / tasks_count) * 100;
+
+    return isNaN(result) ? 0 : result
+  }
+
   return (
-    <div className="card mt-4" style={{ height: "63.4vh" }}>
+    <div className="card mt-4" style={{ height: "90vh" }}>
       <div className="card-header">
         Projects
       </div>
@@ -20,38 +44,55 @@ export function Project({ time, setor, title, porcetagem }) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <th>
-                  <input class="form-check-input" type="checkbox" value="" checked disabled/>
-                </th>
-                <td>Winfit</td>
-                <td>
-                  <div className="input-group mb-3">
-                    <select className="form-select form-select-sm" aria-label=".form-select-sm example">
-                      <option>Lista</option>
-                      <option value="1">Matheus</option>
-                      <option value="2">Canelão</option>
-                      <option value="3">Eriks</option>
-                    </select>
-                    <button className="btn btn-sm btn-secondary" type="button" id="button-addon2">
-                      <i className="fa-solid fa-plus"></i>
-                    </button>
-                  </div>
-                </td>
-                <td>
-                  <div className="progress mt-2">
-                    <div className="progress-bar bg-success" role="progressbar" style={{ width: '25%' }} aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                  </div>
-                </td>
-                <td>
-                  <a href="/">10</a>
-                </td>
-                <td className='actions'>
-                  <button type="button" className="btn btn-sm btn-outline-secondary"><i className="fa-solid fa-pen-to-square"></i></button>
-                  <button type="button" className="btn btn-sm btn-outline-danger"><i className="fa-solid fa-trash-can"></i></button>
-                  <button type="button" className="btn btn-sm btn-outline-primary"><i className="fas fa-folder"></i></button>
-                </td>
-              </tr>
+              {projects.map((project) => {
+                return (
+                  <tr key={project.id}>
+                    <th>
+                      #
+                    </th>
+                    <td>
+                      <Link to={'/'} style={{ textDecoration: 'none' }}>
+                        {project.title}
+                      </Link>
+                    </td>
+                    <td>
+                      <div className="input-group mb-3">
+                        <select className="form-select form-select-sm" aria-label=".form-select-sm example">
+                          <option>Lista</option>
+                          {project.users.map((user) => {
+                            return (
+                              <option key={user.id} value={user.id}>{user.username}</option>
+                            )
+                          })}
+                        </select>
+                        <button className="btn btn-sm btn-secondary" type="button" id="button-addon2">
+                          <i className="fa-solid fa-plus"></i>
+                        </button>
+                      </div>
+                    </td>
+                    <td>
+                      <div className="progress mt-2">
+                        <div className="progress-bar bg-success" role="progressbar" style={{ width: `${calculatePercentageOfProject(project)}%` }} aria-valuenow={calculatePercentageOfProject(project)} aria-valuemin="0" aria-valuemax="110">
+                          {calculatePercentageOfProject(project)}%
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <b>{project.tasks_count}</b>
+                    </td>
+                    <td className='actions'>
+                      <Link to={`/projects/${project.id}`}>
+                        <button type="button" className="btn btn-sm btn-outline-secondary">
+                          <i className="fa-solid fa-pen-to-square"></i>
+                        </button>
+                      </Link>
+                      <button type="button" className="btn btn-sm btn-outline-danger"><i className="fa-solid fa-trash-can"></i></button>
+                      <button type="button" className="btn btn-sm btn-outline-primary"><i className="fas fa-folder"></i></button>
+                    </td>
+                  </tr>
+                )
+              })}
+
             </tbody>
           </table>
         </div>
