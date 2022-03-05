@@ -77,7 +77,7 @@ export function TaskEdit() {
                       </div>
                     </div>
 
-                    <div className="d-flex justify-content-between">
+                    <div className="d-flex justify-content-between mt-1">
                       <div className="d-flex justify-content-start">
                         <a href="/" className="text-muted ms-2 decoratation"><i class="fa-solid fa-image"></i></a>
                         <a href="/" className="text-muted ms-2 decoratation">@</a>
@@ -124,7 +124,7 @@ export function TaskEdit() {
                 </li>
               </ol>
 
-              <h5 className="mt-5 text-muted">Files</h5>
+              <h5 className="mt-5 text-muted">Arquivos Projeto</h5>
               <ul className="list-unstyled">
                 <li>
                   <a href="/" className="btn-link text-secondary"><i className="far fa-fw fa-file-word"></i> Functional-requirements.docx</a>
