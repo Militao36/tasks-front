@@ -13,12 +13,24 @@ class ProjectService {
     return data
   }
 
-  async comment(message, id, userId = '2521bb24-53e2-4136-ba9d-c5ef9d123118') {
+  async comment(message, projectId, userId = '2521bb24-53e2-4136-ba9d-c5ef9d123118') {
     await api.post('/comments', {
       comment: message,
-      project_id: id,
-      user_id: userId
+      projectId: projectId,
+      userId: userId
     })
+  }
+
+  async updateComment(message, projectId, commentId, userId = '2521bb24-53e2-4136-ba9d-c5ef9d123118') {
+    await api.put(`/comments/${commentId}`, {
+      comment: message,
+      projectId: projectId,
+      userId: userId
+    })
+  }
+
+  async deleteComment(id) {
+    await api.delete(`/comments/${id}`)
   }
 
   async update(id, body) {

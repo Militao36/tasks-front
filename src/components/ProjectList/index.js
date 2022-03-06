@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../../config/api'
 import './style.css'
 
-export function Project({ time, setor, title, porcetagem }) {
+export function ProjectList({ time, setor, title, porcetagem }) {
   const [projects, setProjects] = useState([])
 
   useEffect(() => {
@@ -19,8 +19,8 @@ export function Project({ time, setor, title, porcetagem }) {
       return 0
     }
 
-    const { tasks_count, tasks_end, tasks_not_end } = project
-    const result = (tasks_end / tasks_count) * 100;
+    const { tasksCount, tasksEnd, tasks_not_end } = project
+    const result = (tasksEnd / tasksCount) * 100;
 
     return isNaN(result) ? 0 : result
   }
@@ -78,10 +78,10 @@ export function Project({ time, setor, title, porcetagem }) {
                       </div>
                     </td>
                     <td>
-                      <b>{project.tasks_count}</b>
+                      <b>{project.tasksCount}</b>
                     </td>
                     <td className='actions'>
-                      <Link to={`/projects/${project.id}`}>
+                      <Link to={`/project/${project.id}`}>
                         <button type="button" className="btn btn-sm btn-outline-secondary">
                           <i className="fa-solid fa-pen-to-square"></i>
                         </button>

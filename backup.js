@@ -2,14 +2,14 @@ import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { useParams } from 'react-router-dom'
 
-
 import { Card } from "../components/Card";
 import { Editor } from "../components/Editor";
 import { Menu } from "../components/Menu";
+import { Comments } from "../components/Comment";
 import { ModalMembers } from "../components/ModalMembers";
 import ProjectService from "../services/ProjectService";
 
-export function ProjectEdit() {
+export function ProjectView() {
   const { id } = useParams();
 
   const [project, setProject] = useState({
@@ -35,14 +35,10 @@ export function ProjectEdit() {
     deliveryDate: ""
   })
 
-  const [comments, setComments] = useState([])
-  const [message, setMessage] = useState([])
-
   const [addMembers, setAddMembers] = useState([])
 
   useEffect(() => {
     findById()
-    loadComments()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -103,26 +99,6 @@ export function ProjectEdit() {
       },
       deliveryDate: deliveryDate?.toSQLDate() || ""
     })
-  }
-
-  async function loadComments() {
-    const data = await ProjectService.loadComments(id)
-    setComments(data.map((value) => {
-      return {
-        ...value,
-        createdAt: DateTime.fromISO(value.createdAt).toFormat('dd/MM/yyyy HH:mm')
-      }
-    }))
-  }
-
-  async function comment() {
-    if (!message) {
-      return
-    }
-
-    await ProjectService.comment(message, id)
-    await loadComments()
-    setMessage("")
   }
 
   async function update() {
@@ -195,50 +171,7 @@ export function ProjectEdit() {
               <div className="mt-4">
                 <Editor value={project.description} />
                 <hr />
-                <div className="comments mt-4">
-                  <div className="comment mb-4">
-
-                    <form>
-                      <div className="mb-3">
-                        <label htmlFor="comment" className="form-label">Digite seu comentario ...</label>
-                        <textarea onChange={(e) => setMessage(e.target.value)} value={message} className="form-control form-control-sm" id="comment" rows="5"></textarea>
-                      </div>
-                      <button type="button" className="btn btn-sm btn-success" onClick={() => comment()}>Comentar</button>
-                    </form>
-                  </div>
-
-                  <div>
-                    <h4><i className="fa-solid fa-bars-staggered text-success"></i> Atividades</h4>
-                  </div>
-                  <div className="mt-4">
-                    {comments.map((comment) => {
-                      return (
-                        <div key={comment.id}>
-                          <div className="d-flex justify-content-between mt-2">
-                            <span style={{ fontSize: 18 }}>{comment.user.username}</span>
-                            <b className="text-muted" style={{ fontSize: 12 }}>
-                              {comment.createdAt}
-                            </b>
-                          </div>
-                          <div className="card mt-2">
-                            <div className="card-body" style={{ whiteSpace: 'pre-wrap' }}>
-                              {comment.comment}
-                            </div>
-                          </div>
-
-                          <div className="d-flex justify-content-end mt-1">
-                            {/* <div className="d-flex justify-content-end">
-                              <a href="/" className="text-muted ms-2 decoratation"><i className="fa-solid fa-image"></i></a>
-                              <a href="/" className="text-muted ms-2 decoratation">@</a>
-                            </div> */}
-                            <a href="/" className="">Editar</a>
-                            <a href="/" className="ms-2">Excluir</a>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
+                <Comments projectId={id}/>
               </div>
             </div>
             <div className="col-sm-3">

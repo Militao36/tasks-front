@@ -3,29 +3,13 @@ import { Menu } from '../components/Menu'
 import { Task } from '../components/Task';
 
 export function PageTasksBoard() {
-  const [tasks, setTasks] = useState([])
-  const [count, setCount] = useState(0)
-
-  function setTarefas() {
-    const arr = [
-      {
-        title: 'Matheus',
-      },
-      {
-        title: 'Eriks',
-      },
-      {
-        title: 'Canelão',
-      }
-    ]
-    setTasks([arr[count]])
-    setCount(count + 1)
-  }
+  // eslint-disable-next-line no-unused-vars
+  const [list, setList] = useState([])
 
   return (
     <>
       <Menu />
-      <div className="container-fluid" style={{ backgroundColor: '#f4f6f9' }}>
+      <div className="container-fluid" style={{ backgroundColor: '#f4f6f9', }}>
         <div className="d-flex justify-content-between">
           <div className="mt-2">
             <h3>Tasks Board</h3>
@@ -40,8 +24,8 @@ export function PageTasksBoard() {
           </div>
         </div>
 
-        <div className='board d-flex overflow-auto mb-1' style={{ width: '99%', height: '100%', marginLeft: 10, marginRight: 10 }}>
-          <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '82.1vh' }}>
+        <div className='board d-flex overflow-auto mb-1' style={{ width: '99%', height: '100vh', marginLeft: 10, marginRight: 10 }}>
+          <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }}>
             <div className="card-header bg-dark text-white align-middle" style={{ borderRadius: '5px 5px 0 0' }}>
               <i className="fa-solid fa-list-check me-2"></i>
               Backlog
@@ -131,11 +115,9 @@ export function PageTasksBoard() {
             </div>
           </div>
 
-
-
-          {tasks.map((value) => {
+          {list.map((value) => {
             return (
-              <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '82vh' }} >
+              <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '81vh' }} >
                 <div className="card-header bg-success text-white" style={{ borderRadius: '5px 5px 0 0' }}>
                   <i className="fa-solid fa-check me-2"></i>
                   {value.title}
@@ -157,7 +139,7 @@ export function PageTasksBoard() {
             )
           })}
 
-          <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '82vh' }} >
+          <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
             <div className="card-header bg-success text-white" style={{ borderRadius: '5px 5px 0 0' }}>
               <i className="fa-solid fa-check me-2"></i>
               Finalizadas
@@ -178,7 +160,7 @@ export function PageTasksBoard() {
           </div>
 
           <div className=" me-2" style={{ minWidth: 160 }} >
-            <button className="btn btn-sm btn-outline-primary mt-1" onClick={() => setTarefas()} style={{ marginLeft: 20 }}>
+            <button className="btn btn-sm btn-outline-primary mt-1" style={{ marginLeft: 20 }}>
               <i className="fa-solid fa-plus me-2"></i>
               New List</button>
           </div>
