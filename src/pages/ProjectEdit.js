@@ -1,10 +1,13 @@
+import { DateTime } from "luxon";
+import { useEffect, useState } from "react";
+import { useParams } from 'react-router-dom'
+
+
 import { Card } from "../components/Card";
 import { Editor } from "../components/Editor";
 import { Menu } from "../components/Menu";
-import { useParams } from 'react-router-dom'
-import { useEffect, useState } from "react";
-import { api } from "../config/api";
-
+import { ModalMembers } from "../components/ModalMembers";
+import ProjectService from "../services/ProjectService";
 
 export function ProjectEdit() {
   const { id } = useParams();
@@ -13,68 +16,131 @@ export function ProjectEdit() {
     id: "",
     title: "",
     description: "",
-    end_date: null,
-    start_date: null,
-    created_at: null,
-    updated_at: null,
+    endDate: null,
+    startDate: null,
+    createdAt: null,
+    updatedAt: null,
+    status: '',
     users: [],
     timePast: {
       "days": 0,
       "hours": 0,
       "minutes": 0
     },
-    deliveryDate: {
+    deliveryDateObject: {
       "days": 0,
       "hours": 0,
       "minutes": 0
     },
+    deliveryDate: ""
   })
 
   const [comments, setComments] = useState([])
-  const [comment, setComment] = useState([])
+  const [message, setMessage] = useState([])
+
+  const [addMembers, setAddMembers] = useState([])
 
   useEffect(() => {
-    api.get(`/projects/${id}`)
-      .then(({ data }) => {
-        setProject({
-          id: data.id,
-          title: data.title,
-          description: data.description,
-          end_date: data.end_date,
-          start_date: data.start_date,
-          created_at: data.created_at,
-          updated_at: data.updated_at,
-          users: data.users,
-          timePast: {
-            "days": data?.timePast?.days || 0,
-            "hours": data?.timePast?.hours || 0,
-            "minutes": data?.timePast?.minutes?.toFixed(0) || 0,
-          },
-          deliveryDate: {
-            "days": data?.deliveryDate?.days || 0,
-            "hours": data?.deliveryDate?.hours || 0,
-            "minutes": data?.deliveryDate?.minutes?.toFixed(0) || 0,
-          }
-        })
-        loadComments()
-      })
+    findById()
+    loadComments()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
+  }, [])
+
+  useEffect(() => {
+    addMembers.forEach((member) => {
+      const user = project.users.filter((user) => user.id === member.id)
+      if (user.length === 0) {
+        setProject({
+          ...project,
+          users: [
+            ...project.users,
+            member
+          ]
+        })
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [addMembers])
 
 
-  async function loadComments() {
-    const { data } = await api.get(`/comments/?type=project&id=${id}`)
-    setComments(data)
+  async function findById() {
+    const data = await ProjectService.findById(id)
+
+    const date = DateTime.local()
+
+    const startDate = data.startDate ? DateTime.fromISO(data.startDate) : null
+    const endDate = data.endDate ? DateTime.fromISO(data.endDate) : null
+    const deliveryDate = data.deliveryDate ? DateTime.fromISO(data.deliveryDate) : null
+
+    let timePast = null
+    let dateDelivery = null
+
+    if (startDate && startDate?.isValid) {
+      timePast = date.diff(startDate, ['day', 'hour', 'minute']).toObject()
+    }
+
+    if (deliveryDate && deliveryDate?.isValid) {
+      dateDelivery = date.diff(deliveryDate, ['day', 'hour', 'minute'])?.toObject()
+    }
+
+    setProject({
+      id: data.id,
+      title: data.title,
+      description: data.description,
+      startDate: startDate?.toFormat('dd/MM/yyyy HH:mm') ?? '-',
+      endDate: endDate?.toFormat('dd/MM/yyyy HH:mm') ?? '-',
+      users: data.users,
+      status: data.status,
+      timePast: {
+        days: timePast?.days || 0,
+        hours: timePast?.hours || 0,
+        minutes: timePast?.minutes?.toFixed(0) || 0,
+      },
+      deliveryDateObject: {
+        days: dateDelivery?.days || 0,
+        hours: dateDelivery?.hours || 0,
+        minutes: dateDelivery?.minutes?.toFixed(0) || 0,
+      },
+      deliveryDate: deliveryDate?.toSQLDate() || ""
+    })
   }
 
-  async function Comment() {
-    if (!comment) {
+  async function loadComments() {
+    const data = await ProjectService.loadComments(id)
+    setComments(data.map((value) => {
+      return {
+        ...value,
+        createdAt: DateTime.fromISO(value.createdAt).toFormat('dd/MM/yyyy HH:mm')
+      }
+    }))
+  }
+
+  async function comment() {
+    if (!message) {
       return
     }
 
-    await api.post('/comments', { comment, project_id: id, user_id: 'a39d5b44-61eb-4bea-adff-9a20650f6f6f' })
+    await ProjectService.comment(message, id)
     await loadComments()
-    setComment("")
+    setMessage("")
+  }
+
+  async function update() {
+    await ProjectService.update(id, {
+      ...project,
+      users: project.users,
+      deliveryDate: project.deliveryDate
+    })
+    await findById()
+  }
+
+  async function deleteUsersOfProject(userId) {
+    setProject({
+      ...project,
+      users: project.users.filter((user) => user.id !== userId)
+    })
+
+    await ProjectService.deleteUserOfProject(id, userId)
   }
 
   return (
@@ -120,7 +186,7 @@ export function ProjectEdit() {
                     <div className="card-body text-center">
                       <h5 className="card-title text-muted">Tempo de Atraso <i className="fa-solid fa-clock text-danger"></i></h5>
                       <b className="card-text text-center text-muted mb-0">
-                        {project?.deliveryDate.days} dia(s), {project.deliveryDate.hours} hora(s), {project.deliveryDate.minutes} minuto(s)
+                        {project?.deliveryDateObject.days} dia(s), {project.deliveryDateObject.hours} hora(s), {project.deliveryDateObject.minutes} minuto(s)
                       </b>
                     </div>
                   </div>
@@ -135,9 +201,9 @@ export function ProjectEdit() {
                     <form>
                       <div className="mb-3">
                         <label htmlFor="comment" className="form-label">Digite seu comentario ...</label>
-                        <textarea onChange={(e) => setComment(e.target.value)} value={comment} className="form-control form-control-sm" id="comment" rows="5"></textarea>
+                        <textarea onChange={(e) => setMessage(e.target.value)} value={message} className="form-control form-control-sm" id="comment" rows="5"></textarea>
                       </div>
-                      <button type="button" className="btn btn-sm btn-success" onClick={() => Comment()}>Comentar</button>
+                      <button type="button" className="btn btn-sm btn-success" onClick={() => comment()}>Comentar</button>
                     </form>
                   </div>
 
@@ -151,7 +217,7 @@ export function ProjectEdit() {
                           <div className="d-flex justify-content-between mt-2">
                             <span style={{ fontSize: 18 }}>{comment.user.username}</span>
                             <b className="text-muted" style={{ fontSize: 12 }}>
-                              {comment.created_at}
+                              {comment.createdAt}
                             </b>
                           </div>
                           <div className="card mt-2">
@@ -177,49 +243,64 @@ export function ProjectEdit() {
             </div>
             <div className="col-sm-3">
               <div className="">
-                <h3 className="bg-success text-light p-3 rounded" ><i className="fa-brands fa-buffer"></i> 
-                    {project.title}
+                <h3 className="bg-success text-light p-3 rounded" ><i className="fa-brands fa-buffer"></i>
+                  {project.title} ({project.status})
                 </h3>
               </div>
 
               <div className="text-muted mt-3">
                 <p className="text-sm">Inicio
-                  <b className="d-block">{project.start_date}</b>
+                  <b className="d-block">{project.startDate}</b>
                 </p>
                 <p className="text-sm mt-2">Fim
-                  <b className="d-block">{project.end_date || 'Em desenvolvimento'}</b>
+                  <b className="d-block">{project.endDate}</b>
                 </p>
+
+                <p className="text-sm mt-2">
+                  <label htmlFor="">Data de Entrega</label>
+                  <input className="form-control form-control-sm"
+                    type="date" placeholder=".form-control-sm"
+                    aria-label=".form-control-sm example"
+                    value={project.deliveryDate}
+                    onChange={(e) => setProject({ ...project, deliveryDate: e.target.value })}
+                  />
+                </p>
+                <div className="text-sm mt-2">
+                  <label htmlFor="">Status</label>
+                  <div className="input-group mb-3">
+                    <select className="form-select form-select-sm" aria-label=".form-select-sm example" value={project.status} onChange={(e) => setProject({ ...project, status: e.target.value })}>
+                      <option value={"draft"}>Rascunho</option>
+                      <option value={"published"}>Publicado</option>
+                    </select>
+                  </div>
+
+                </div>
               </div>
 
-              <h5 className="mt-5 text-muted">
+              <h5 className="mt-3 text-muted " data-bs-toggle="modal" data-bs-target="#exampleModal">
                 Lista de Membros
                 <i className="fa-solid fa-circle-plus text-success ms-2" style={{ cursor: 'pointer' }}></i>
               </h5>
-              <ol className="list-group list-group-flush mt-3 mb-3">
+
+              <ol className="list-group list-group-flush mt-2 mb-3">
                 {project.users.map((user) => {
                   return (
-                    <li key={user.id} className="list-group-item d-flex justify-content-between align-items-start">
+                    <li key={user.id} onClick={() => deleteUsersOfProject(user.id)} className="list-group-item d-flex justify-content-between align-items-start">
                       {user.username}
-                      <i className="fa-solid fa-square-arrow-up-right text-dark" style={{ cursor: 'pointer' }}></i>
+                      <i className="fa-solid fa-trash text-danger" style={{ cursor: 'pointer' }}></i>
                     </li>
                   )
                 })}
               </ol>
 
-              {/* <h5 className="mt-5 text-muted">Arquivos Projeto</h5>
-              <ul className="list-unstyled">
-                <li>
-                  <a href="/" className="btn-link text-secondary"><i className="far fa-fw fa-file-word"></i> Contract-10_12_2014.docx</a>
-                </li>
-              </ul> */}
-              <div className="mt-5 mb-3">
-                <button className="btn btn-sm btn-primary">Add Tasks</button>
-                {/* <button className="btn btn-sm btn-warning ms-2">Report contact</button> */}
+              <div className="mt-3 mb-3">
+                <button className="btn btn-sm btn-primary" onClick={update}>Salvar Alterações</button>
               </div>
             </div>
           </div>
         </Card>
       </div>
+      <ModalMembers setAddMembers={setAddMembers} addMembers={addMembers} />
     </>
   )
 }
