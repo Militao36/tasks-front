@@ -1,11 +1,14 @@
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import ContextUser from '../../context/ContextUsers'
 import { Editor } from '../Editor'
 import { Card } from '../Card'
 import { Menu } from '../Menu'
 import ProjectService from '../../services/ProjectService'
+import { useParams } from 'react-router-dom'
 
-export function ProjectCreate() {
+export function ProjectCreateAndUpdated() {
+  const { id } = useParams();
+
   const { users } = useContext(ContextUser)
 
   const [userSelect, setUserSelect] = useState('')
@@ -16,7 +19,8 @@ export function ProjectCreate() {
     description: "",
     users: [],
     deliveryDate: "",
-    expectedDate: ""
+    expectedDate: "",
+    status: ""
   })
 
   function addUser(member = []) {
@@ -38,9 +42,30 @@ export function ProjectCreate() {
   }
 
   async function create() {
-    const data = await ProjectService.create(project)
-    console.log(data)
+    if (!id) {
+      await ProjectService.create(project)
+    } else {
+      await ProjectService.update(id, project)
+    }
   }
+
+  async function findById() {
+    const data = await ProjectService.findById(id)
+    setProject({
+      id: id,
+      title: data.title,
+      description: data.description,
+      deliveryDate: data.deliveryDate ? String(data.deliveryDate).substring(0, 10) : "",
+      expectedDate: String(data.expectedDate).substring(0, 10),
+      status: data.status,
+      users: data.users
+    })
+  }
+
+  useEffect(() => {
+    findById()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id])
 
   return (
     <>
@@ -89,7 +114,7 @@ export function ProjectCreate() {
               <input
                 className="form-control form-control-sm"
                 type="text"
-                value={"Rascunho"}
+                value={project.status || "Rascunho"}
                 disabled
               />
             </div>
@@ -122,6 +147,7 @@ export function ProjectCreate() {
                   <thead>
                     <tr>
                       <th scope="col">Usuário</th>
+                      <th scope="col">Ações</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -129,6 +155,11 @@ export function ProjectCreate() {
                       return (
                         <tr key={value.id}>
                           <td>{value.username}</td>
+                          <td>
+                            <button className='btn btn-sm btn-danger'>
+                              <i className="fa-solid fa-trash"></i>
+                            </button>
+                          </td>
                         </tr>
                       )
                     })}

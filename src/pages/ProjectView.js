@@ -152,7 +152,7 @@ export function ProjectView() {
             <div className="col-sm-3">
               <div className="">
                 <h3 className="bg-success text-light p-3 rounded" ><i className="fa-brands fa-buffer"></i>
-                  {project.title} ({project.status})
+                  {project.title}
                 </h3>
               </div>
 
