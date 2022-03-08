@@ -3,22 +3,20 @@ import ContextUser from '../../context/ContextUsers'
 import { Editor } from '../Editor'
 import { Card } from '../Card'
 import { Menu } from '../Menu'
+import ProjectService from '../../services/ProjectService'
 
 export function ProjectCreate() {
   const { users } = useContext(ContextUser)
 
-  const [value, setValue] = useState("")
   const [userSelect, setUserSelect] = useState('')
 
   const [project, setProject] = useState({
     id: "",
     title: "",
     description: "",
-    endDate: null,
-    startDate: null,
-    status: '',
     users: [],
-    deliveryDate: ""
+    deliveryDate: "",
+    expectedDate: ""
   })
 
   function addUser(member = []) {
@@ -39,6 +37,10 @@ export function ProjectCreate() {
     }
   }
 
+  async function create() {
+    const data = await ProjectService.create(project)
+    console.log(data)
+  }
 
   return (
     <>
@@ -57,26 +59,47 @@ export function ProjectCreate() {
           <div className="row">
             <div className='col-sm-6'>
               <label htmlFor="">Nome do Projeto</label>
-              <input className="form-control form-control-sm" type="text" />
+              <input
+                className="form-control form-control-sm"
+                type="text"
+                value={project.title}
+                onChange={(e) => setProject({ ...project, title: e.target.value })}
+              />
             </div>
             <div className='col-sm-2'>
               <label htmlFor="">Data de Entrega</label>
-              <input className="form-control form-control-sm" type="date" />
+              <input
+                className="form-control form-control-sm"
+                type="date"
+                value={project.deliveryDate}
+                onChange={(e) => setProject({ ...project, deliveryDate: e.target.value })}
+              />
             </div>
             <div className='col-sm-2'>
               <label htmlFor="">Data Prevista de Entrega</label>
-              <input className="form-control form-control-sm" type="date" />
+              <input
+                className="form-control form-control-sm"
+                type="date"
+                value={project.expectedDate}
+                onChange={(e) => setProject({ ...project, expectedDate: e.target.value })}
+              />
             </div>
             <div className='col-sm-2'>
               <label htmlFor="">Status</label>
-              <select class="form-select form-select-sm" aria-label=".form-select-sm example">
-                <option value="draft">Rascunho</option>
-                <option value="published">Publicado</option>
-              </select>
+              <input
+                className="form-control form-control-sm"
+                type="text"
+                value={"Rascunho"}
+                disabled
+              />
             </div>
             <div className='col-sm-12 mt-3'>
               <h6>Descrição</h6>
-              <Editor view={false} value={value} setValue={setValue} />
+              <Editor
+                view={false}
+                value={project.description}
+                setValue={(e) => setProject({ ...project, description: e })}
+              />
             </div>
             <div className='mt-3 row'>
               <div className="col-sm-5">
@@ -114,13 +137,11 @@ export function ProjectCreate() {
               </div>
             </div>
             <div className='col-sm-12 d-flex justify-content-end'>
-              <button className='btn btn-sm btn-dark'>Salvar informações</button>
+              <button className='btn btn-sm btn-dark' onClick={create}>Salvar informações</button>
             </div>
           </div>
         </Card>
       </div>
-
     </>
-
   )
 }

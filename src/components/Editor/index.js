@@ -3,7 +3,7 @@ import MDEditor from '@uiw/react-md-editor';
 
 export function Editor({ view = true, value = '', setValue }) {
   if (!value) {
-    value = "### Editor teste\n\r- Primeira task"
+    value = ""
   }
 
   return (

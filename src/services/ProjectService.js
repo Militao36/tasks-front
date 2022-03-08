@@ -7,6 +7,11 @@ class ProjectService {
     return data
   }
 
+  async create(body) {
+    const { data } = await api.post('/projects', body)
+    return data
+  }
+
   async loadComments(id) {
     const { data } = await api.get(`/comments/?type=project&id=${id}`)
 

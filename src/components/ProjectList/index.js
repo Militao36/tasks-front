@@ -58,16 +58,14 @@ export function ProjectList({ time, setor, title, porcetagem }) {
                     <td>
                       <div className="input-group mb-3">
                         <select className="form-select form-select-sm" aria-label=".form-select-sm example">
-                          <option>Lista</option>
                           {project.users.map((user) => {
                             return (
                               <option key={user.id} value={user.id}>{user.username}</option>
                             )
                           })}
+                          
+                          {project.users.length === 0 && <option>Nenhum membro</option>}
                         </select>
-                        <button className="btn btn-sm btn-secondary" type="button" id="button-addon2">
-                          <i className="fa-solid fa-plus"></i>
-                        </button>
                       </div>
                     </td>
                     <td>
