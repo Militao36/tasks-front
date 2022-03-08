@@ -13,7 +13,7 @@ class ProjectService {
     return data
   }
 
-  async comment(message, projectId, userId = '579f1a73-0a81-40c7-ae85-faeb7aab63ae') {
+  async comment(message, projectId, userId = '46781a2d-918b-4eda-acf9-3dd50e2c34bb') {
     await api.post('/comments', {
       comment: message,
       projectId: projectId,
@@ -21,7 +21,7 @@ class ProjectService {
     })
   }
 
-  async updateComment(message, projectId, commentId, userId = '579f1a73-0a81-40c7-ae85-faeb7aab63ae') {
+  async updateComment(message, projectId, commentId, userId = '46781a2d-918b-4eda-acf9-3dd50e2c34bb') {
     await api.put(`/comments/${commentId}`, {
       comment: message,
       projectId: projectId,

@@ -31,7 +31,8 @@ export function ProjectView() {
       "hours": 0,
       "minutes": 0
     },
-    deliveryDate: ""
+    deliveryDate: "",
+    expectedDate: "",
   })
 
   useEffect(() => {
@@ -47,17 +48,27 @@ export function ProjectView() {
 
     const startDate = data.startDate ? DateTime.fromISO(data.startDate) : null
     const endDate = data.endDate ? DateTime.fromISO(data.endDate) : null
+    const expectedDate = data.expectedDate ? DateTime.fromISO(data.expectedDate) : null
     const deliveryDate = data.deliveryDate ? DateTime.fromISO(data.deliveryDate) : null
 
+    // tempo passado
     let timePast = null
-    let dateDelivery = null
 
-    if (startDate && startDate?.isValid) {
-      timePast = date.diff(startDate, ['day', 'hour', 'minute']).toObject()
+    // data prevista
+    let dateExpectedDate = null
+
+    if (startDate?.isValid) {
+      timePast = endDate?.isValid ?
+        endDate.diff(startDate, ['day', 'hour', 'minute']).toObject()
+        :
+        date.diff(startDate, ['day', 'hour', 'minute']).toObject()
     }
 
-    if (deliveryDate && deliveryDate?.isValid) {
-      dateDelivery = date.diff(deliveryDate, ['day', 'hour', 'minute'])?.toObject()
+    if (expectedDate?.isValid) {
+      dateExpectedDate = deliveryDate?.isValid ?
+        deliveryDate.diff(expectedDate, ['day', 'hour', 'minute'])?.toObject()
+        :
+        date.diff(expectedDate, ['day', 'hour', 'minute']).toObject()
     }
 
     setProject({
@@ -74,11 +85,12 @@ export function ProjectView() {
         minutes: timePast?.minutes?.toFixed(0) || 0,
       },
       deliveryDateObject: {
-        days: dateDelivery?.days || 0,
-        hours: dateDelivery?.hours || 0,
-        minutes: dateDelivery?.minutes?.toFixed(0) || 0,
+        days: dateExpectedDate?.days || 0,
+        hours: dateExpectedDate?.hours || 0,
+        minutes: dateExpectedDate?.minutes?.toFixed(0) || 0,
       },
-      deliveryDate: deliveryDate?.toFormat('dd/MM/yyyy') || ""
+      deliveryDate: deliveryDate?.toFormat('dd/MM/yyyy') || "-",
+      expectedDate: expectedDate?.toFormat('dd/MM/yyyy') || "-"
     })
   }
 
@@ -92,26 +104,26 @@ export function ProjectView() {
             <nav aria-label="breadcrumb ">
               <ol className="breadcrumb">
                 <li className="breadcrumb-item"><a href="/">Home</a></li>
-                <li className="breadcrumb-item active" aria-current="page">Projeto</li>
+                <li className="breadcrumb-item" aria-current="page"><a href="/">Projeto</a></li>
+                <li className="breadcrumb-item active" aria-current="page">View</li>
               </ol>
             </nav>
           </div>
-
         </div>
         <Card>
           <div className="row" style={{ minHeight: '80vh' }}>
             <div className="col-sm-9">
               <div className="row">
-                <div className="col-sm-4">
-                  <div className="card shadow-sm">
+                <div className="col-sm-4 d-flex align-items-stretch">
+                  <div className="card shadow-sm" style={{ flex: 1 }}>
                     <div className="card-body text-center">
                       <h5 className="card-title text-muted">Membros <i className="fa-solid fa-user-group text-success"></i></h5>
                       <b className="card-text text-center text-muted mb-0">{project.users.length} membros</b>
                     </div>
                   </div>
                 </div>
-                <div className="col-sm-4">
-                  <div className="card shadow-sm">
+                <div className="col-sm-4 d-flex align-items-stretch">
+                  <div className="card shadow-sm" style={{ flex: 1 }}>
                     <div className="card-body text-center">
                       <h5 className="card-title text-muted">Tempo gasto <i className="fa-solid fa-clock text-primary"></i></h5>
                       <b className="card-text text-center text-muted mb-0">
@@ -120,10 +132,10 @@ export function ProjectView() {
                     </div>
                   </div>
                 </div>
-                <div className="col-sm-4 shadow-sm">
-                  <div className="card">
+                <div className="col-sm-4 d-flex align-items-stretch">
+                  <div className="card shadow-sm"  style={{ flex: 1 }}>
                     <div className="card-body text-center">
-                      <h5 className="card-title text-muted">Tempo de Atraso <i className="fa-solid fa-clock text-danger"></i></h5>
+                      <h5 className="card-title text-muted">Tempo de Atraso (Entrega) <i className="fa-solid fa-clock text-danger"></i></h5>
                       <b className="card-text text-center text-muted mb-0">
                         {project?.deliveryDateObject.days} dia(s), {project.deliveryDateObject.hours} hora(s), {project.deliveryDateObject.minutes} minuto(s)
                       </b>
@@ -158,6 +170,10 @@ export function ProjectView() {
 
                 <p className="text-sm mt-2">Data de Entrega
                   <b className="d-block">{project.deliveryDate}</b>
+                </p>
+
+                <p className="text-sm mt-2">Data Prevista de Entrega
+                  <b className="d-block">{project.expectedDate}</b>
                 </p>
               </div>
 
