@@ -63,7 +63,7 @@ export function ProjectList({ time, setor, title, porcetagem }) {
                               <option key={user.id} value={user.id}>{user.username}</option>
                             )
                           })}
-                          
+
                           {project.users.length === 0 && <option>Nenhum membro</option>}
                         </select>
                       </div>
@@ -79,13 +79,18 @@ export function ProjectList({ time, setor, title, porcetagem }) {
                       <b>{project.tasksCount}</b>
                     </td>
                     <td className='actions'>
-                      <Link to={`/project/${project.id}`}>
+                      <Link to={`/project/view/${project.id}`}>
                         <button type="button" className="btn btn-sm btn-outline-secondary">
                           <i className="fa-solid fa-pen-to-square"></i>
                         </button>
                       </Link>
                       <button type="button" className="btn btn-sm btn-outline-danger"><i className="fa-solid fa-trash-can"></i></button>
-                      <button type="button" className="btn btn-sm btn-outline-primary"><i className="fas fa-folder"></i></button>
+                      <Link to={`/project`}>
+                        <button type="button" className="btn btn-sm btn-outline-primary">
+                          <i className="fa-solid fa-circle-plus"></i>
+                        </button>
+                      </Link>
+
                     </td>
                   </tr>
                 )

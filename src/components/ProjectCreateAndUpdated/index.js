@@ -50,6 +50,10 @@ export function ProjectCreateAndUpdated() {
   }
 
   async function findById() {
+    if (!id) {
+      return
+    }
+    
     const data = await ProjectService.findById(id)
     setProject({
       id: id,

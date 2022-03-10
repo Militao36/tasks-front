@@ -179,7 +179,7 @@ export function ProjectView() {
 
               <div className="mt-3 text-muted">
                 <h5>Lista de Membros</h5>
-                <table class="table mt-2">
+                <table className="table mt-2">
                   <thead></thead>
                   <tbody>
                     {project.users.map((user) => {

@@ -1,10 +1,39 @@
-import { useState } from 'react';
+import { DateTime } from 'luxon';
+import { useEffect, useState } from 'react';
 import { Menu } from '../components/Menu'
 import { Task } from '../components/Task';
+import { api } from '../config/api'
 
 export function PageTasksBoard() {
   // eslint-disable-next-line no-unused-vars
-  const [list, setList] = useState([])
+  const [tasks, setTasks] = useState([])
+  const [tasksFinalizadas, setTasksFinalizadas] = useState([])
+
+  useEffect(() => {
+    api.get(`/tasks?projectId=${'8d22e90c-0759-422c-9557-15301d0f90b2'}`)
+      .then(({ data = [] }) => {
+        const users = data.map(value => {
+          return {
+            id: value.user.id,
+            username: value.user.username,
+            tasks: []
+          }
+        })
+
+        const body = users.map((value) => {
+          return {
+            ...value,
+            tasks: data.filter((v) => {
+              return (v.user.id === value.id) && v.endDate === null
+            })
+          }
+        })
+
+        const finalizadas = data.filter((value) => value.endDate !== null)
+        setTasksFinalizadas(finalizadas)
+        setTasks(body)
+      })
+  }, [])
 
   return (
     <>
@@ -31,109 +60,34 @@ export function PageTasksBoard() {
               Backlog
             </div>
             <div className="card-body overflow-auto mb-2 mb-2" style={{ backgroundColor: '#f0f0f1' }}>
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
 
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
-              <Task
-                title={"Adicionar nova cultura, no povoamento"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
             </div>
           </div>
 
-          {list.map((value) => {
+          {tasks.map((value) => {
             return (
-              <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '81vh' }} >
-                <div className="card-header bg-success text-white" style={{ borderRadius: '5px 5px 0 0' }}>
+              <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
+                <div className="card-header bg-primary text-white" style={{ borderRadius: '5px 5px 0 0' }}>
                   <i className="fa-solid fa-check me-2"></i>
-                  {value.title}
+                  {value.username}
                 </div>
                 <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
-                  <Task
-                    title={"Tela de cliente"}
-                    border={"5px solid #198754"}
-                    time={"Prazo: 01/02/2022"}
-                    labels={[
-                      {
-                        name: 'Iniciado',
-                        color: 'bg-primary'
-                      },
-                    ]}
-                  />
+                  {value.tasks.map((task) => {
+                    return (
+                      <Task
+                        title={task.title}
+                        startDate={DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy - HH:mm')}
+                        border={"5px solid #0d6efd"}
+                        labels={[
+                          {
+                            name: 'Iniciado',
+                            color: 'bg-primary'
+                          },
+                        ]}
+                      />
+                    )
+                  })}
+
                 </div>
               </div>
             )
@@ -145,24 +99,24 @@ export function PageTasksBoard() {
               Finalizadas
             </div>
             <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
-              <Task
-                title={"Tela de cliente"}
-                border={"5px solid #198754"}
-                time={"Prazo: 01/02/2022"}
-                labels={[
-                  {
-                    name: 'Iniciado',
-                    color: 'bg-primary'
-                  },
-                ]}
-              />
+              {tasksFinalizadas.map((task) => {
+                return (
+                  <Task
+                    username={task.user.username}
+                    startDate={DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy - HH:mm')}
+                    endDate={DateTime.fromISO(task.endDate).toFormat('dd/MM/yyyy - HH:mm')}
+                    title={task.title}
+                    border={"5px solid #198754"}
+                    labels={[
+                      {
+                        name: 'Iniciado',
+                        color: 'bg-primary'
+                      },
+                    ]}
+                  />
+                )
+              })}
             </div>
-          </div>
-
-          <div className=" me-2" style={{ minWidth: 160 }} >
-            <button className="btn btn-sm btn-outline-primary mt-1" style={{ marginLeft: 20 }}>
-              <i className="fa-solid fa-plus me-2"></i>
-              New List</button>
           </div>
         </div>
       </div >
