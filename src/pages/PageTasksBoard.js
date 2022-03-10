@@ -1,16 +1,16 @@
-import { DateTime } from 'luxon';
 import { useEffect, useState } from 'react';
+import { DateTime } from 'luxon';
+
 import { Menu } from '../components/Menu'
-import { Task } from '../components/Task';
+import { TaskCard } from '../components/TaskCard';
 import { api } from '../config/api'
 
 export function PageTasksBoard() {
-  // eslint-disable-next-line no-unused-vars
   const [tasks, setTasks] = useState([])
   const [tasksFinalizadas, setTasksFinalizadas] = useState([])
 
   useEffect(() => {
-    api.get(`/tasks?projectId=${'8d22e90c-0759-422c-9557-15301d0f90b2'}`)
+    api.get(`/tasks?projectId=${'0da45f33-f75e-4a7b-a14f-28fb123c91c9'}`)
       .then(({ data = [] }) => {
         const users = data.map(value => {
           return {
@@ -55,7 +55,7 @@ export function PageTasksBoard() {
 
         <div className='board d-flex overflow-auto mb-1' style={{ width: '99%', height: '100vh', marginLeft: 10, marginRight: 10 }}>
           <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }}>
-            <div className="card-header bg-dark text-white align-middle" style={{ borderRadius: '5px 5px 0 0' }}>
+            <div className="card-header bg-primary text-white align-middle" style={{ borderRadius: '5px 5px 0 0' }}>
               <i className="fa-solid fa-list-check me-2"></i>
               Backlog
             </div>
@@ -67,16 +67,16 @@ export function PageTasksBoard() {
           {tasks.map((value) => {
             return (
               <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
-                <div className="card-header bg-primary text-white" style={{ borderRadius: '5px 5px 0 0' }}>
+                <div className="card-header bg-dark text-white" style={{ borderRadius: '5px 5px 0 0' }}>
                   <i className="fa-solid fa-check me-2"></i>
                   {value.username}
                 </div>
                 <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
                   {value.tasks.map((task) => {
                     return (
-                      <Task
+                      <TaskCard
                         title={task.title}
-                        startDate={DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy - HH:mm')}
+                        startDate={task.startDate}
                         border={"5px solid #0d6efd"}
                         labels={[
                           {
@@ -94,14 +94,40 @@ export function PageTasksBoard() {
           })}
 
           <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
-            <div className="card-header bg-success text-white" style={{ borderRadius: '5px 5px 0 0' }}>
+            <div className="card-header bg-dark text-white" style={{ borderRadius: '5px 5px 0 0' }}>
               <i className="fa-solid fa-check me-2"></i>
               Finalizadas
             </div>
             <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
               {tasksFinalizadas.map((task) => {
                 return (
-                  <Task
+                  <TaskCard
+                    username={task.user.username}
+                    startDate={DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy - HH:mm')}
+                    endDate={DateTime.fromISO(task.endDate).toFormat('dd/MM/yyyy - HH:mm')}
+                    title={task.title}
+                    border={"5px solid #198754"}
+                    labels={[
+                      {
+                        name: 'Iniciado',
+                        color: 'bg-primary'
+                      },
+                    ]}
+                  />
+                )
+              })}
+            </div>
+          </div>
+
+          <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
+            <div className="card-header bg-success text-white" style={{ borderRadius: '5px 5px 0 0' }}>
+              <i className="fa-solid fa-check me-2"></i>
+              Entregue
+            </div>
+            <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
+              {tasksFinalizadas.map((task) => {
+                return (
+                  <TaskCard
                     username={task.user.username}
                     startDate={DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy - HH:mm')}
                     endDate={DateTime.fromISO(task.endDate).toFormat('dd/MM/yyyy - HH:mm')}

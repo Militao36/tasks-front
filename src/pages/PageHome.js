@@ -2,10 +2,10 @@ import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Menu } from "../components/Menu";
 import { ProjectList } from '../components/ProjectList'
-import { Task } from '../components/Task'
+import { TaskCard } from '../components/TaskCard'
 import { api } from "../config/api";
 
-export function Home() {
+export function PageHome() {
   const [tasksInProgress, setTasksInProgress] = useState([])
   const statusTasks = 'in-progress'
 
@@ -27,7 +27,7 @@ export function Home() {
           <h5 className="card-title text-start">Tarefas em andamento</h5>
           {tasksInProgress.map((task) => {
             return (
-              <Task
+              <TaskCard
                 key={task.id}
                 title={task.title}
                 username={task.user.username}

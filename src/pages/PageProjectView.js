@@ -8,7 +8,7 @@ import { Menu } from "../components/Menu";
 import { Comments } from "../components/Comment";
 import ProjectService from "../services/ProjectService";
 
-export function ProjectView() {
+export function PageProjectView() {
   const { id } = useParams();
 
   const [project, setProject] = useState({
