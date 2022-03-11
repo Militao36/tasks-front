@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { DateTime } from 'luxon';
 
 import { Menu } from '../components/Menu'
 import { TaskCard } from '../components/TaskCard';
@@ -8,29 +7,42 @@ import { api } from '../config/api'
 export function PageTasksBoard() {
   const [tasks, setTasks] = useState([])
   const [tasksFinalizadas, setTasksFinalizadas] = useState([])
+  const [tasksBackLog, setTasksBackLog] = useState([])
 
   useEffect(() => {
-    api.get(`/tasks?projectId=${'0da45f33-f75e-4a7b-a14f-28fb123c91c9'}`)
+    api.get(`/tasks?projectId=${'f0d822bb-d491-4d62-a762-7f6bea17a21c'}`)
       .then(({ data = [] }) => {
-        const users = data.map(value => {
-          return {
-            id: value.user.id,
-            username: value.user.username,
-            tasks: []
+        const lists = data.map((value) => {
+          if (value?.list === null) {
+            return null
           }
-        })
 
-        const body = users.map((value) => {
           return {
-            ...value,
-            tasks: data.filter((v) => {
-              return (v.user.id === value.id) && v.endDate === null
-            })
+            id: value.list.id,
+            title: value.list.title,
           }
-        })
+        }).filter((v) => v !== null).reduce((prev, current) => {
+          if (prev.filter(v => v.id === current.id).length === 0) {
+            prev.push(current)
+            return prev
+          }
 
-        const finalizadas = data.filter((value) => value.endDate !== null)
+          return prev
+        }, [])
+
+        const backlog = data.filter((value) => value.user == null)
+        setTasksBackLog(backlog)
+
+        const finalizadas = data.filter((value) => value.startDate !== null && value.endDate !== null)
         setTasksFinalizadas(finalizadas)
+
+        const body = lists.map(({ id, title }) => {
+          return {
+            id,
+            title,
+            tasks: data.filter((v) => (v?.list?.id === id) && v.endDate === null)
+          }
+        })
         setTasks(body)
       })
   }, [])
@@ -43,13 +55,16 @@ export function PageTasksBoard() {
           <div className="mt-2">
             <h3>Tasks Board</h3>
           </div>
-          <div className="d-none d-sm-block mt-2 ">
-            <ol className="breadcrumb d-flex justify-content-end">
-              <button type="button" className="btn btn-sm btn-outline-dark me-2">
-                <i className="fa-solid fa-plus me-2"></i>
-                New Task
-              </button>
-            </ol>
+          <div className="d-none d-sm-block mt-2">
+            <button type="button" className="btn btn-sm btn-dark">
+              <i className="fa-solid fa-plus me-2"></i>
+              New Task
+            </button>
+
+            <button className="btn btn-sm btn-dark" style={{ marginLeft: 20 }}>
+              <i className="fa-solid fa-plus me-2"></i>
+              New List
+            </button>
           </div>
         </div>
 
@@ -60,53 +75,14 @@ export function PageTasksBoard() {
               Backlog
             </div>
             <div className="card-body overflow-auto mb-2 mb-2" style={{ backgroundColor: '#f0f0f1' }}>
-
-            </div>
-          </div>
-
-          {tasks.map((value) => {
-            return (
-              <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
-                <div className="card-header bg-dark text-white" style={{ borderRadius: '5px 5px 0 0' }}>
-                  <i className="fa-solid fa-check me-2"></i>
-                  {value.username}
-                </div>
-                <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
-                  {value.tasks.map((task) => {
-                    return (
-                      <TaskCard
-                        title={task.title}
-                        startDate={task.startDate}
-                        border={"5px solid #0d6efd"}
-                        labels={[
-                          {
-                            name: 'Iniciado',
-                            color: 'bg-primary'
-                          },
-                        ]}
-                      />
-                    )
-                  })}
-
-                </div>
-              </div>
-            )
-          })}
-
-          <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
-            <div className="card-header bg-dark text-white" style={{ borderRadius: '5px 5px 0 0' }}>
-              <i className="fa-solid fa-check me-2"></i>
-              Finalizadas
-            </div>
-            <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
-              {tasksFinalizadas.map((task) => {
+              {tasksBackLog.map((task) => {
                 return (
                   <TaskCard
-                    username={task.user.username}
-                    startDate={DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy - HH:mm')}
-                    endDate={DateTime.fromISO(task.endDate).toFormat('dd/MM/yyyy - HH:mm')}
+                    key={task.id}
+                    username={task.user?.username}
                     title={task.title}
-                    border={"5px solid #198754"}
+                    startDate={task.startDate}
+                    border={"5px solid #0d6efd"}
                     labels={[
                       {
                         name: 'Iniciado',
@@ -119,6 +95,35 @@ export function PageTasksBoard() {
             </div>
           </div>
 
+          {tasks.map((value) => {
+            return (
+              <div key={value.id} className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
+                <div className="card-header bg-dark text-white" style={{ borderRadius: '5px 5px 0 0' }}>
+                  {value.title}
+                </div>
+                <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
+                  {value.tasks.map((task) => {
+                    return (
+                      <TaskCard
+                        key={task.id}
+                        username={task.user.username}
+                        title={task.title}
+                        startDate={task.startDate}
+                        border={"5px solid #343a40"}
+                        labels={[
+                          {
+                            name: 'Iniciado',
+                            color: 'bg-primary'
+                          },
+                        ]}
+                      />
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+
           <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
             <div className="card-header bg-success text-white" style={{ borderRadius: '5px 5px 0 0' }}>
               <i className="fa-solid fa-check me-2"></i>
@@ -128,9 +133,10 @@ export function PageTasksBoard() {
               {tasksFinalizadas.map((task) => {
                 return (
                   <TaskCard
+                    key={task.id}
                     username={task.user.username}
-                    startDate={DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy - HH:mm')}
-                    endDate={DateTime.fromISO(task.endDate).toFormat('dd/MM/yyyy - HH:mm')}
+                    startDate={task.startDate}
+                    endDate={task.endDate}
                     title={task.title}
                     border={"5px solid #198754"}
                     labels={[

@@ -8,25 +8,31 @@ export function TaskCard({ username, title, startDate = '', endDate = '', border
         marginLeft: "2px",
         backgroundColor: '#f8f9fa',
         borderTop: border
-      }}
-    >
+      }}>
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
-        <h6>{username?.toUpperCase()}</h6>
-        <i className="fa-solid fa-caret-down" style={{ cursor: 'pointer' }}></i>
+        <span style={{ fontSize: 14 }}><i className="fa-solid fa-user-secret"></i> {username || ' -'}</span>
+
+        <div class="dropdown">
+          <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+          </button>
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li class="dropdown-item">Mover <i class="fa-solid fa-arrows-up-down-left-right"></i> </li>
+            <li><hr class="dropdown-divider" /></li>
+            <li class="dropdown-item"><i className="fa-solid fa-check me-2"></i>Finalizar</li>
+            <li class="dropdown-item"><i className="fa-solid fa-list-check me-2"></i> BackLog</li>
+          </ul>
+        </div>
       </div>
       <div>
-        <h6 className="mb-0 mt-1" style={{ fontSize: 14 }}>
+        <p style={{ fontSize: 14 }}>
           {title}
-        </h6>
-        <div className='mt-2'>
-          <a href="/" style={{ textDecoration: 'none', fontSize: 12, color: 'black', float: "right" }}>
-            {startDate ? "Inicio: " + DateTime.fromISO(startDate).toFormat('dd/MM/yyyy - HH:mm') : "Aguardando"}
-          </a>
-          <br />
-          <a href="/" style={{ textDecoration: 'none', fontSize: 12, color: 'black' }}>
-            {endDate ? "Fim: " + DateTime.fromISO(endDate).toFormat('dd/MM/yyyy - HH:mm') : null}
-          </a>
-        </div>
+        </p>
+        <a href="/" style={{ textDecoration: 'none', fontSize: 10, color: 'black', fontFamily: 'monospace' }}>
+          {startDate ? "Inicio: " + DateTime.fromISO(startDate).toFormat('dd/MM/yyyy') : "Aguardando"}
+        </a>
+        <a href="/" className='ms-2' style={{ textDecoration: 'none', fontSize: 10, color: 'black' }}>
+          {endDate ? "Fim: " + DateTime.fromISO(endDate).toFormat('dd/MM/yyyy') : null}
+        </a>
       </div>
     </div>
   )
