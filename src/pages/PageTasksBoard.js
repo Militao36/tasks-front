@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
+import { CreateList } from '../components/CreateList';
 
 import { Menu } from '../components/Menu'
+import { Modal } from '../components/Modal';
 import { TaskCard } from '../components/TaskCard';
 import { api } from '../config/api'
 
@@ -61,7 +63,9 @@ export function PageTasksBoard() {
               New Task
             </button>
 
-            <button className="btn btn-sm btn-dark" style={{ marginLeft: 20 }}>
+            <button className="btn btn-sm btn-dark"
+              data-bs-toggle="modal" data-bs-target="#exampleModal"
+              style={{ marginLeft: 20 }}>
               <i className="fa-solid fa-plus me-2"></i>
               New List
             </button>
@@ -152,6 +156,7 @@ export function PageTasksBoard() {
           </div>
         </div>
       </div >
+      <CreateList />
     </>
   );
 }

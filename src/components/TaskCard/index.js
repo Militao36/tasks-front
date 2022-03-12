@@ -12,14 +12,14 @@ export function TaskCard({ username, title, startDate = '', endDate = '', border
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
         <span style={{ fontSize: 14 }}><i className="fa-solid fa-user-secret"></i> {username || ' -'}</span>
 
-        <div class="dropdown">
-          <button class="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+        <div className="dropdown">
+          <button className="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
           </button>
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li class="dropdown-item">Mover <i class="fa-solid fa-arrows-up-down-left-right"></i> </li>
-            <li><hr class="dropdown-divider" /></li>
-            <li class="dropdown-item"><i className="fa-solid fa-check me-2"></i>Finalizar</li>
-            <li class="dropdown-item"><i className="fa-solid fa-list-check me-2"></i> BackLog</li>
+          <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+            <li className="dropdown-item">Mover <i className="fa-solid fa-arrows-up-down-left-right"></i> </li>
+            <li><hr className="dropdown-divider" /></li>
+            <li className="dropdown-item"><i className="fa-solid fa-check me-2"></i>Finalizar</li>
+            <li className="dropdown-item"><i className="fa-solid fa-list-check me-2"></i> BackLog</li>
           </ul>
         </div>
       </div>

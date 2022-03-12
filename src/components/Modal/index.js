@@ -1,7 +1,9 @@
-export function Modal({ title, children }) {
+export function Modal({ title, children, xl = true }) {
+  const className = xl ? 'modal-xl' : ''
+
   return (
     <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div className="modal-dialog modal-xl">
+      <div className={`modal-dialog ${className}`}>
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title" id="exampleModalLabel">{title}</h5>
