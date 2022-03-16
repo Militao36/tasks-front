@@ -12,7 +12,7 @@ export function PageHome() {
   useEffect(() => {
     api.get(`/tasks/${statusTasks}`)
       .then(({ data }) => {
-        setTasksInProgress(data)
+        setTasksInProgress(data === ''? [] : data)
       })
   }, [])
 
