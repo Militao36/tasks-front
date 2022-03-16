@@ -7,7 +7,7 @@ export function Editor({ view = true, value = '', setValue }) {
   }
 
   return (
-    <div className="container-fluid">
+    <div className="">
       {!view &&
         <MDEditor
           value={value}
