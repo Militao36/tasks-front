@@ -22,7 +22,7 @@ export function ProjectList({ time, setor, title, porcetagem }) {
     const { tasksCount, tasksEnd, tasks_not_end } = project
     const result = (tasksEnd / tasksCount) * 100;
 
-    return isNaN(result) ? 0 : result
+    return isNaN(result) ? 0 : result.toFixed(2)
   }
 
   return (

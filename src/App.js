@@ -13,6 +13,7 @@ import { api } from './config/api';
 import { PageProjectCreateAndUpdated } from './pages/PageProjectCreateAndUpdated';
 
 import { TaskCreateAndUpdated } from './components/TaskCreateAndUpdated'
+import { TasksView } from './components/TasksView'
 
 function App() {
   const [users, setUsers] = useState([])
@@ -31,6 +32,7 @@ function App() {
           <Route path="/project/view/:id" element={<PageProjectView />} exact />
           <Route path="/tasks/board" element={<PageTasksBoard />} exact />
           <Route path="/project/edit/:id" element={<PageProjectCreateAndUpdated />} exact />
+          <Route path="/tasks/edit/view/:id" element={<TasksView />} exact />
           <Route path="/project" element={<PageProjectCreateAndUpdated />} exact />
         </Routes>
       </BrowserRouter>
