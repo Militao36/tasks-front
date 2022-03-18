@@ -1,0 +1,104 @@
+.container-inputs {
+  background-color: #ffffff;
+  width: 25%;
+  height: 100vh;
+}
+.container-inputs {
+  background-color: #ffffff;
+  width: 100vw;
+  height: 100vh;
+  background: #5e5e5e fixed no-repeat;
+  display: flex;
+  background-size: cover;
+  justify-content: center;
+  align-items: center;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.form-login {
+  width: 320px;
+  height: 420px;
+  border: 2px solid rgb(255, 255, 255);
+  border-radius: 80px 0px 80px 0px;
+  color: rgb(0, 0, 0);
+  background-color: rgba(252, 252, 252, 0.438);
+  top: 50%;
+  left: 50%;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  padding: 68px 28px;
+  backdrop-filter: blur(8px);
+  box-shadow: 5px 5px 5px 1px;
+}
+
+.tituloLogin {
+  width: 100%;
+  text-align: center;
+  margin-top: -25px !important;
+  margin-bottom: 35px !important;
+}
+
+.inputLogin {
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid #000000;
+  background: transparent;
+  outline: none;
+  height: 40px;
+  color: rgb(255, 255, 255);
+  font-size: 16px;
+  outline: none !important;
+  text-decoration: none !important;
+  font-weight: bold;
+}
+
+.buttonLogin {
+  border: none;
+  outline: none;
+  height: 35px;
+  color: rgb(255, 251, 251);
+  background-color: #000000 !important;
+  border-radius: 5px;
+  transition: 0.2s;
+  transition-delay: -0.1s;
+  width: 100%;
+}
+
+.inputLogin:focus {
+  background-color: rgba(0, 0, 0, 0);
+  text-decoration: none;
+  outline: none;
+  box-shadow: none !important;
+  border-bottom: 1px solid #ffffff;
+  transition: 0.2s ease;
+  color: rgb(255, 255, 255);
+  border-top: none !important;
+  border-left: none !important;
+  border-right: none !important;
+}
+
+.LogoWinfitLogin {
+  border-radius: 50%;
+  position: absolute;
+  z-index: 1;
+  background-color: rgba(0, 0, 0, 0);
+  top: 100px;
+}
+.loading{
+  width:100%;
+  height:100vh;
+  position: absolute;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #fff;
+  transition: 0.2s ease;
+}

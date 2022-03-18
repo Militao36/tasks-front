@@ -10,13 +10,9 @@ export function CreateList({ projectId }) {
     try {
       if (!listTitle || !projectId) return
       await api.post('/lists', { title: listTitle, projectId })
-      toast.success("Salvo com sucesso!",{
-        position: toast.POSITION.BOTTOM_RIGHT
-      })
+       return toast.success("Salvo com sucesso!")
     } catch (error) {
-      toast.success("Não foi possível salvar",{
-        position: toast.POSITION.BOTTOM_RIGHT
-      })
+      return toast.success("Não foi possível salvar")
     }
   }
 
