@@ -3,9 +3,11 @@ import ContextUser from '../../context/ContextUsers'
 import { Editor } from '../Editor'
 import { Card } from '../Card'
 import ProjectService from '../../services/ProjectService'
+import { toast } from 'react-toastify'
 
 export function ProjectCreateAndUpdated({ id }) {
   const { users } = useContext(ContextUser)
+
 
   const [userSelect, setUserSelect] = useState('')
 
@@ -38,10 +40,23 @@ export function ProjectCreateAndUpdated({ id }) {
   }
 
   async function create() {
-    if (!id) {
-      await ProjectService.create(project)
-    } else {
-      await ProjectService.update(id, project)
+    try {
+      if (!id) {
+        await ProjectService.create(project)
+        return toast.success("Projeto salvo com sucesso", {
+          position: toast.POSITION.BOTTOM_RIGHT
+        })
+      } else {
+        await ProjectService.update(id, project)
+        return toast.success("Projeto editado com sucesso", {
+          position: toast.POSITION.BOTTOM_RIGHT
+        })
+      }
+    } catch (error) {
+      
+      return toast.success("Não foi possível atualizar ou editar, tente novamente", {
+        position: toast.POSITION.BOTTOM_RIGHT
+      })
     }
   }
 

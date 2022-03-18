@@ -27,11 +27,14 @@ export function ProjectList({ time, setor, title, porcetagem }) {
 
   return (
     <div className="card mt-4" style={{ height: "90vh" }}>
-      <div className="card-header">
+      <div className="card-header d-flex justify-content-between">
         Projects
+        <Link to={`/project`} style={{ textDecoration: 'none'}}>
+          Criar Projeto
+        </Link>
       </div>
-      <div className="card-body">
-        <div className="table-responsive" style={{ height: "100%" }}>
+      <div className="card-body" style={{ overflow: 'auto' }}>
+        <div className="table-responsive">
           <table className="table table-striped">
             <thead>
               <tr>
@@ -89,12 +92,6 @@ export function ProjectList({ time, setor, title, porcetagem }) {
                           <i className="fa-solid fa-square-poll-vertical"></i>
                         </button>
                       </Link>
-                      <Link to={`/project`}>
-                        <button type="button" className="btn btn-sm btn-outline-secondary">
-                          <i className="fa-solid fa-circle-plus"></i>
-                        </button>
-                      </Link>
-
                     </td>
                   </tr>
                 )
