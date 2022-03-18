@@ -82,7 +82,7 @@ export function PageTasksBoard() {
                     <i className="fa-solid fa-caret-down" style={{ cursor: 'pointer' }} onClick={() => move(value.title, value.id)}></i>
                   }
                   <p>{value.title}</p>
-                  <i class="fa-solid fa-square-plus me-2" style={{ cursor: 'pointer' }} onClick={() => createTask()}></i>
+                  <i className="fa-solid fa-square-plus me-2" style={{ cursor: 'pointer' }} onClick={() => createTask()}></i>
                 </div>
                 <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
                   {value.tasks.map((task) => {
