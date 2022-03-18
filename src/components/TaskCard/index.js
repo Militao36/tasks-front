@@ -10,7 +10,7 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
   }
 
   return (
-    <div className="card p-3 mt-3" style={style} onClick={click}>
+    <div className="card p-3 mt-3" style={style}>
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
         <span style={{ fontSize: 14 }}><i className="fa-solid fa-user-secret"></i> {user?.username || ' -'}</span>
 
@@ -33,7 +33,7 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
           </ul>
         </div>
       </div>
-      <div>
+      <div onClick={click}>
         <p style={{ fontSize: 14 }}>
           {title}
         </p>

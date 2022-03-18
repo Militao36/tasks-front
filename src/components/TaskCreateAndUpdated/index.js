@@ -1,12 +1,12 @@
 import { useContext, useState } from 'react'
+import { toast } from 'react-toastify'
 import { api } from '../../config/api'
 import ContextUsers from '../../context/ContextUsers'
 import { Editor } from '../Editor'
 import { Modal } from '../Modal'
-import { toast } from 'react-toastify'
 
 
-export function TaskCreateAndUpdated({ projectId }) {
+export function TaskCreateAndUpdated({ projectId, listId }) {
   const { users } = useContext(ContextUsers)
 
   const [task, setTask] = useState({
@@ -16,15 +16,16 @@ export function TaskCreateAndUpdated({ projectId }) {
     userId: "",
     deliveryDate: "",
     description: "",
-    projectId: projectId
+    projectId: projectId,
+    listId: listId
   })
 
-  const notificationSuccess = (message) =>{
+  const notificationSuccess = (message) => {
     toast.success(message, {
       position: toast.POSITION.BOTTOM_RIGHT
     })
   }
-  const notificationError = (message) =>{
+  const notificationError = (message) => {
     toast.success(message, {
       position: toast.POSITION.BOTTOM_RIGHT
     })
@@ -33,14 +34,15 @@ export function TaskCreateAndUpdated({ projectId }) {
     try {
       const response = await api.post(`/tasks`, {
         ...task,
-        projectId: projectId
+        projectId: projectId,
+        listId: listId
       })
       notificationSuccess("Tarefa criada com sucesso")
       console.log({ response })
     } catch (error) {
       notificationError("Não foi possível atualizar/criar, tente novamente")
     }
-    
+
   }
 
   return (

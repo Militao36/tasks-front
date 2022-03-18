@@ -13,6 +13,8 @@ export function PageTasksBoard() {
 
   const [tasks, setTasks] = useState([])
 
+  const [listId, setListId] = useState("")
+
   const [taskId, setTaskId] = useState("")
 
   const [idTaskMove, setIdTaskMove] = useState("")
@@ -36,10 +38,14 @@ export function PageTasksBoard() {
       })
   }
 
-
   async function move(type, listId) {
+    if (!idTaskMove) {
+      return
+    }
+    
     await api.post('/tasks/task/move', { type, listId, taskId: idTaskMove })
     listTasks()
+    setIdTaskMove("")
   }
 
   function createTask() {
@@ -82,7 +88,12 @@ export function PageTasksBoard() {
                     <i className="fa-solid fa-caret-down" style={{ cursor: 'pointer' }} onClick={() => move(value.title, value.id)}></i>
                   }
                   <p>{value.title}</p>
-                  <i className="fa-solid fa-square-plus me-2" style={{ cursor: 'pointer' }} onClick={() => createTask()}></i>
+                  <i className="fa-solid fa-square-plus me-2"
+                    style={{ cursor: 'pointer' }}
+                    onClick={() => {
+                      setListId(value.id)
+                      createTask()
+                    }}></i>
                 </div>
                 <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
                   {value.tasks.map((task) => {
@@ -107,7 +118,7 @@ export function PageTasksBoard() {
         </div>
       </div >
       <CreateList projectId={projectId} />
-      <TaskCreateAndUpdated projectId={projectId} />
+      <TaskCreateAndUpdated projectId={projectId} listId={listId} />
       <TasksView taskId={taskId} />
     </>
   );
