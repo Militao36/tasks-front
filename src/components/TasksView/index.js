@@ -1,17 +1,30 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "../Card";
 import { Comments } from "../Comment";
 import { Editor } from "../Editor";
 import { Modal } from "../Modal";
+import { api } from "../../config/api"
 
 
 export function TasksView({ taskId }) {
   const [tasks, setTasks] = useState({
-    id: taskId,
+    id: "",
     title: "",
     description: ""
   });
 
+  useEffect(() => {
+    getTask(taskId)
+  },[taskId])
+
+  const getTask = async (id) =>{
+    try {
+      const {data} = await api.get(`/tasks/${id}`)
+      setTasks(data)
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <>
@@ -20,7 +33,7 @@ export function TasksView({ taskId }) {
           <Card>
             <div className="row" style={{ minHeight: '80vh' }}>
               <div className="col-sm-9">
-                <div className="row">
+                <div className="row d-flex justify-content-between">
                   <div className="col-sm-4 d-flex align-items-stretch">
                     <div className="card shadow-sm" style={{ flex: 1 }}>
                       <div className="card-body text-center">
@@ -41,6 +54,9 @@ export function TasksView({ taskId }) {
                   </div>
                 </div>
                 <div className="mt-4">
+                  <h2>{tasks.description}</h2>
+                </div>
+                <div className="mt-4">
                   <Editor />
                   <hr />
                   <Comments />
@@ -49,28 +65,28 @@ export function TasksView({ taskId }) {
               <div className="col-sm-3">
                 <div className="">
                   <h3 className="bg-success text-light p-3 rounded" ><i className="fa-brands fa-buffer"></i>
-                    #Nome tarefa
+                   {tasks.title}
                   </h3>
                 </div>
                 <div className="text-muted mt-3">
-                  <p className="text-sm mt-2">Status
-                    <b className="d-block"></b>
+                  <p className="text-sm mt-2">branch
+                    <b className="d-block">{tasks.branch}</b>
                   </p>
 
                   <p className="text-sm mt-2">Inicio
-                    <b className="d-block"></b>
-                  </p>
-                  <p className="text-sm mt-2">Fim
-                    <b className="d-block"></b>
-                  </p>
+                  <b className="d-block">{tasks.startDate}</b>
+                </p>
+                <p className="text-sm mt-2">Fim
+                  <b className="d-block">{tasks.endDate}</b>
+                </p>
 
-                  <p className="text-sm mt-2">Data de Entrega
-                    <b className="d-block"></b>
-                  </p>
+                <p className="text-sm mt-2">Data de Entrega
+                  <b className="d-block">{tasks.deliveryDate}</b>
+                </p>
 
-                  <p className="text-sm mt-2">Data Prevista de Entrega
-                    <b className="d-block"></b>
-                  </p>
+                <p className="text-sm mt-2">Data Prevista de Entrega
+                  <b className="d-block">{tasks.expectedDate}</b>
+                </p>
                   <p className="text-sm mt-2">Membro
                     <b className="d-block"></b>
                   </p>
