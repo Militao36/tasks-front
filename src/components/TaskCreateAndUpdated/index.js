@@ -3,6 +3,7 @@ import { api } from '../../config/api'
 import ContextUsers from '../../context/ContextUsers'
 import { Editor } from '../Editor'
 import { Modal } from '../Modal'
+import { toast } from 'react-toastify'
 
 
 export function TaskCreateAndUpdated({ projectId }) {
@@ -18,12 +19,28 @@ export function TaskCreateAndUpdated({ projectId }) {
     projectId: projectId
   })
 
-  async function save() {
-    const response = await api.post(`/tasks`, {
-      ...task,
-      projectId: projectId
+  const notificationSuccess = (message) =>{
+    toast.success(message, {
+      position: toast.POSITION.BOTTOM_RIGHT
     })
-    console.log({ response })
+  }
+  const notificationError = (message) =>{
+    toast.success(message, {
+      position: toast.POSITION.BOTTOM_RIGHT
+    })
+  }
+  async function save() {
+    try {
+      const response = await api.post(`/tasks`, {
+        ...task,
+        projectId: projectId
+      })
+      notificationSuccess("Tarefa criada com sucesso")
+      console.log({ response })
+    } catch (error) {
+      notificationError("Não foi possível atualizar/criar, tente novamente")
+    }
+    
   }
 
   return (
