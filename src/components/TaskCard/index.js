@@ -1,17 +1,16 @@
+/* eslint-disable jsx-a11y/anchor-is-valid */
 import { DateTime } from 'luxon'
 import './style.css'
 
-export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', border = "5px solid #212529", setIdTaskMove } }) {
-
+export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove } }) {
   const style = {
     marginLeft: "2px",
     backgroundColor: '#f8f9fa',
-    borderTop: border
+    borderTop: "5px solid #212529",
   }
 
   return (
-    <div
-      className="card p-3 mt-3" style={style}>
+    <div className="card p-3 mt-3" style={style} onClick={click}>
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
         <span style={{ fontSize: 14 }}><i className="fa-solid fa-user-secret"></i> {user?.username || ' -'}</span>
 
@@ -26,10 +25,10 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
               <hr className="dropdown-divider" />
             </li>
             <li className="dropdown-item">
-              <i className="fa-solid fa-check me-2"></i>Finalizar
+              Excluir
             </li>
             <li className="dropdown-item">
-              <i className="fa-solid fa-list-check me-2"></i> BackLog
+              Visualizar
             </li>
           </ul>
         </div>
@@ -38,10 +37,10 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
         <p style={{ fontSize: 14 }}>
           {title}
         </p>
-        <a href="/" style={{ textDecoration: 'none', fontSize: 10, color: 'black', fontFamily: 'monospace' }}>
+        <a style={{ textDecoration: 'none', fontSize: 10, color: 'black', fontFamily: 'monospace' }}>
           {startDate ? "Inicio: " + DateTime.fromISO(startDate).toFormat('dd/MM/yyyy') : "Aguardando"}
         </a>
-        <a href="/" className='ms-2' style={{ textDecoration: 'none', fontSize: 10, color: 'black' }}>
+        <a className='ms-2' style={{ textDecoration: 'none', fontSize: 10, color: 'black' }}>
           {endDate ? "Fim: " + DateTime.fromISO(endDate).toFormat('dd/MM/yyyy') : null}
         </a>
       </div>
