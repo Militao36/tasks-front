@@ -1,25 +1,36 @@
 import { DateTime } from 'luxon'
 import './style.css'
 
-export function TaskCard({ username, title, startDate = '', endDate = '', border = "5px solid #212529" }) {
+export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', border = "5px solid #212529", setIdTaskMove } }) {
+
+  const style = {
+    marginLeft: "2px",
+    backgroundColor: '#f8f9fa',
+    borderTop: border
+  }
+
   return (
     <div
-      className="card p-3 mt-3" style={{
-        marginLeft: "2px",
-        backgroundColor: '#f8f9fa',
-        borderTop: border
-      }}>
+      className="card p-3 mt-3" style={style}>
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
-        <span style={{ fontSize: 14 }}><i className="fa-solid fa-user-secret"></i> {username || ' -'}</span>
+        <span style={{ fontSize: 14 }}><i className="fa-solid fa-user-secret"></i> {user?.username || ' -'}</span>
 
         <div className="dropdown">
           <button className="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
           </button>
           <ul className="dropdown-menu" aria-labelledby="dropdownMenuButton1">
-            <li className="dropdown-item">Mover <i className="fa-solid fa-arrows-up-down-left-right"></i> </li>
-            <li><hr className="dropdown-divider" /></li>
-            <li className="dropdown-item"><i className="fa-solid fa-check me-2"></i>Finalizar</li>
-            <li className="dropdown-item"><i className="fa-solid fa-list-check me-2"></i> BackLog</li>
+            <li className="dropdown-item" onClick={() => setIdTaskMove(id)}>
+              Mover <i className="fa-solid fa-arrows-up-down-left-right"></i>
+            </li>
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+            <li className="dropdown-item">
+              <i className="fa-solid fa-check me-2"></i>Finalizar
+            </li>
+            <li className="dropdown-item">
+              <i className="fa-solid fa-list-check me-2"></i> BackLog
+            </li>
           </ul>
         </div>
       </div>

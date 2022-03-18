@@ -1,37 +1,18 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { api } from "../../config/api";
 import { Modal } from "../Modal";
 
-export function CreateList({ listId }) {
+export function CreateList({ projectId }) {
   const [listTitle, setListTitle] = useState("")
-  const [id, setId] = useState("")
-
-  useEffect(() => {
-    if (listId)
-      setId(listId)
-    else
-      setId("")
-  }, [listId])
 
   async function save() {
-    if (!listTitle) return
+    if (!listTitle || !projectId) return
 
-    const { data } = await api.post('/lists', { title: listTitle })
-    setId(data.id)
-  }
-
-  async function updated() {
-    if (!listTitle || !id) return
-
-    await api.put(`/lists/${id}`, { title: listTitle })
+    await api.post('/lists', { title: listTitle, projectId })
   }
 
   async function handle() {
-    if (!id) {
-      return await save()
-    }
-
-    return await updated()
+    await save()
   }
 
   return (
@@ -44,6 +25,7 @@ export function CreateList({ listId }) {
       />
       <button
         className="btn btn-sm btn-success mt-2"
+        id="btn-save-list"
         style={{ float: 'right' }}
         onClick={handle}>
         Salvar

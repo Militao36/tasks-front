@@ -1,9 +1,7 @@
-import { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom'
 import { Card } from "../Card";
+import { Comments } from "../Comment";
 import { Editor } from "../Editor";
 import { Menu } from "../Menu";
-import { Comments } from "../Comment";
 
 export function TasksView() {
   return (

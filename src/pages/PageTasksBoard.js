@@ -1,53 +1,51 @@
 import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { CreateList } from '../components/CreateList';
-
-import { Menu } from '../components/Menu'
-import { Modal } from '../components/Modal';
+import { Menu } from '../components/Menu';
 import { TaskCard } from '../components/TaskCard';
-import { api } from '../config/api'
+import { TaskCreateAndUpdated } from '../components/TaskCreateAndUpdated';
+import { api } from '../config/api';
+
 
 export function PageTasksBoard() {
+  const { projectId } = useParams();
+
   const [tasks, setTasks] = useState([])
   const [tasksFinalizadas, setTasksFinalizadas] = useState([])
   const [tasksBackLog, setTasksBackLog] = useState([])
 
+  const [idTaskMove, setIdTaskMove] = useState("")
+
   useEffect(() => {
-    api.get(`/tasks?projectId=${'f0d822bb-d491-4d62-a762-7f6bea17a21c'}`)
-      .then(({ data = [] }) => {
-        const lists = data.map((value) => {
-          if (value?.list === null) {
-            return null
-          }
+    api.get(`/lists?projectId=${projectId}`)
+      .then(async ({ data = [] }) => {
 
-          return {
-            id: value.list.id,
-            title: value.list.title,
-          }
-        }).filter((v) => v !== null).reduce((prev, current) => {
-          if (prev.filter(v => v.id === current.id).length === 0) {
-            prev.push(current)
-            return prev
-          }
+        const getTasks = await api.get(`/tasks?projectId=${projectId}`)
 
-          return prev
-        }, [])
-
-        const backlog = data.filter((value) => value.user == null)
+        const backlog = getTasks.data.filter((value) => value.user == null || value.listId === null)
         setTasksBackLog(backlog)
 
-        const finalizadas = data.filter((value) => value.startDate !== null && value.endDate !== null)
+        const finalizadas = getTasks.data.filter((value) => value.startDate !== null && value.endDate !== null)
         setTasksFinalizadas(finalizadas)
 
-        const body = lists.map(({ id, title }) => {
-          return {
-            id,
-            title,
-            tasks: data.filter((v) => (v?.list?.id === id) && v.endDate === null)
-          }
+        const lists = data.map((value) => {
+          value.tasks = getTasks.data.filter((task) => task.listId === value.id)
+          return value
         })
-        setTasks(body)
+
+        setTasks(lists)
       })
-  }, [])
+  }, [projectId])
+
+
+  function move(type, listId) {
+    console.log(type, idTaskMove, listId)
+  }
+
+  function createTask() {
+    const modal = new window.bootstrap.Modal(document.getElementById('create-task-of-modal'))
+    modal.show()
+  }
 
   return (
     <>
@@ -58,7 +56,7 @@ export function PageTasksBoard() {
             <h3>Tasks Board</h3>
           </div>
           <div className="d-none d-sm-block mt-2">
-            <button type="button" className="btn btn-sm btn-dark">
+            <button type="button" className="btn btn-sm btn-dark" onClick={() => createTask()}>
               <i className="fa-solid fa-plus me-2"></i>
               New Task
             </button>
@@ -75,7 +73,10 @@ export function PageTasksBoard() {
         <div className='board d-flex overflow-auto mb-1' style={{ width: '99%', height: '100vh', marginLeft: 10, marginRight: 10 }}>
           <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }}>
             <div className="card-header bg-primary text-white align-middle" style={{ borderRadius: '5px 5px 0 0' }}>
-              <i className="fa-solid fa-list-check me-2"></i>
+              <i className="fa-solid fa-list-check me-2"
+                style={{ cursor: 'pointer' }}
+                onClick={() => move("Backlog", "")}>
+              </i>
               Backlog
             </div>
             <div className="card-body overflow-auto mb-2 mb-2" style={{ backgroundColor: '#f0f0f1' }}>
@@ -83,16 +84,13 @@ export function PageTasksBoard() {
                 return (
                   <TaskCard
                     key={task.id}
-                    username={task.user?.username}
-                    title={task.title}
-                    startDate={task.startDate}
-                    border={"5px solid #0d6efd"}
-                    labels={[
+                    task={
                       {
-                        name: 'Iniciado',
-                        color: 'bg-primary'
-                      },
-                    ]}
+                        ...task,
+                        border: "5px solid #0d6efd",
+                        setIdTaskMove: setIdTaskMove,
+                      }
+                    }
                   />
                 )
               })}
@@ -103,6 +101,11 @@ export function PageTasksBoard() {
             return (
               <div key={value.id} className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
                 <div className="card-header bg-dark text-white" style={{ borderRadius: '5px 5px 0 0' }}>
+                  {(idTaskMove) && <i
+                    onClick={() => move(value.title, value.id)}
+                    className="fa-solid fa-arrow-down-short-wide me-2"
+                    style={{ color: 'yellow', cursor: 'pointer' }}>
+                  </i>}
                   {value.title}
                 </div>
                 <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
@@ -110,16 +113,13 @@ export function PageTasksBoard() {
                     return (
                       <TaskCard
                         key={task.id}
-                        username={task.user.username}
-                        title={task.title}
-                        startDate={task.startDate}
-                        border={"5px solid #343a40"}
-                        labels={[
+                        task={
                           {
-                            name: 'Iniciado',
-                            color: 'bg-primary'
-                          },
-                        ]}
+                            ...task,
+                            border: "5px solid #343a40",
+                            setIdTaskMove: setIdTaskMove,
+                          }
+                        }
                       />
                     )
                   })}
@@ -130,7 +130,10 @@ export function PageTasksBoard() {
 
           <div className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
             <div className="card-header bg-success text-white" style={{ borderRadius: '5px 5px 0 0' }}>
-              <i className="fa-solid fa-check me-2"></i>
+              <i className="fa-solid fa-check me-2"
+                style={{ cursor: 'pointer' }}
+                onClick={() => move("Entregue", "")}>
+              </i>
               Entregue
             </div>
             <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
@@ -138,17 +141,13 @@ export function PageTasksBoard() {
                 return (
                   <TaskCard
                     key={task.id}
-                    username={task.user.username}
-                    startDate={task.startDate}
-                    endDate={task.endDate}
-                    title={task.title}
-                    border={"5px solid #198754"}
-                    labels={[
+                    task={
                       {
-                        name: 'Iniciado',
-                        color: 'bg-primary'
-                      },
-                    ]}
+                        ...task,
+                        border: "5px solid #198754",
+                        setIdTaskMove: setIdTaskMove,
+                      }
+                    }
                   />
                 )
               })}
@@ -156,7 +155,8 @@ export function PageTasksBoard() {
           </div>
         </div>
       </div >
-      <CreateList />
+      <CreateList projectId={projectId} />
+      <TaskCreateAndUpdated projectId={projectId} />
     </>
   );
 }

@@ -1,19 +1,17 @@
 
-import { PageProjectView } from './pages/PageProjectView';
-import {
-  Route,
-  Routes,
-  BrowserRouter
-} from 'react-router-dom';
-import { PageHome } from './pages/PageHome';
-import { PageTasksBoard } from './pages/PageTasksBoard';
-import ContextUser from './context/ContextUsers';
 import { useEffect, useState } from 'react';
+import {
+  BrowserRouter, Route,
+  Routes
+} from 'react-router-dom';
+import { TaskCreateAndUpdated } from './components/TaskCreateAndUpdated';
 import { api } from './config/api';
+import ContextUser from './context/ContextUsers';
+import { PageHome } from './pages/PageHome';
 import { PageProjectCreateAndUpdated } from './pages/PageProjectCreateAndUpdated';
+import { PageProjectView } from './pages/PageProjectView';
+import { PageTasksBoard } from './pages/PageTasksBoard';
 
-import { TaskCreateAndUpdated } from './components/TaskCreateAndUpdated'
-import { TasksView } from './components/TasksView'
 
 function App() {
   const [users, setUsers] = useState([])
@@ -29,11 +27,9 @@ function App() {
         <Routes>
           <Route path="/" element={<PageHome />} exact />
           <Route path="/tasks" element={<TaskCreateAndUpdated />} exact />
-          <Route path="/project/view/:id" element={<PageProjectView />} exact />
-          <Route path="/tasks/board" element={<PageTasksBoard />} exact />
-          <Route path="/project/edit/:id" element={<PageProjectCreateAndUpdated />} exact />
-          <Route path="/tasks/edit/view/:id" element={<TasksView />} exact />
+          <Route path="/tasks/board/:projectId" element={<PageTasksBoard />} exact />
           <Route path="/project" element={<PageProjectCreateAndUpdated />} exact />
+          <Route path="/project/view/:id" element={<PageProjectView />} exact />
         </Routes>
       </BrowserRouter>
     </ContextUser.Provider>

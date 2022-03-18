@@ -84,9 +84,11 @@ export function ProjectList({ time, setor, title, porcetagem }) {
                           <i className="fa-solid fa-pen-to-square"></i>
                         </button>
                       </Link>
-                      <button type="button" className="btn btn-sm btn-outline-secondary">
-                        <i className="fa-solid fa-square-poll-vertical"></i>
-                      </button>
+                      <Link to={`/tasks/board/${project.id}`}>
+                        <button type="button" className="btn btn-sm btn-outline-secondary">
+                          <i className="fa-solid fa-square-poll-vertical"></i>
+                        </button>
+                      </Link>
                       <Link to={`/project`}>
                         <button type="button" className="btn btn-sm btn-outline-secondary">
                           <i className="fa-solid fa-circle-plus"></i>
