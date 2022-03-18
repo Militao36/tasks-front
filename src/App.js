@@ -11,7 +11,7 @@ import { PageHome } from './pages/PageHome';
 import { PageProjectCreateAndUpdated } from './pages/PageProjectCreateAndUpdated';
 import { PageProjectView } from './pages/PageProjectView';
 import { PageTasksBoard } from './pages/PageTasksBoard';
-
+import { FormLogin } from './pages/PageLogin';
 
 function App() {
   const [users, setUsers] = useState([])
@@ -25,7 +25,8 @@ function App() {
     <ContextUser.Provider value={{ users, setUsers }}>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<PageHome />} exact />
+          <Route path="/" element={<FormLogin />} exact />
+          <Route path="/home" element={<PageHome />} exact />
           <Route path="/tasks" element={<TaskCreateAndUpdated />} exact />
           <Route path="/tasks/board/:projectId" element={<PageTasksBoard />} exact />
           <Route path="/project" element={<PageProjectCreateAndUpdated />} exact />
