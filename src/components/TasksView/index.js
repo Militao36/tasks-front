@@ -8,10 +8,11 @@ import { Modal } from "../Modal";
 export function TasksView({ taskId }) {
   const [tasks, setTasks] = useState({
     id: taskId,
-    title: ""
+    title: "",
+    description: ""
   });
-  
-  
+
+
   return (
     <>
       <Modal title={"Detalhes da tarefa"} ID="task-view">
