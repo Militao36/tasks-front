@@ -19,10 +19,19 @@ export function PageTasksBoard() {
 
   const [idTaskMove, setIdTaskMove] = useState("")
 
+  const [listProps, setlistProps] = useState(false)
+
+
   useEffect(() => {
     listTasks()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId])
+
+  useEffect(() => {
+    listTasks()
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [listProps])
 
   function listTasks() {
     api.get(`/lists?projectId=${projectId}`)
@@ -117,8 +126,8 @@ export function PageTasksBoard() {
           })}
         </div>
       </div >
-      <CreateList projectId={projectId} />
-      <TaskCreateAndUpdated projectId={projectId} listId={listId} />
+      <CreateList projectId={projectId} setProps={setlistProps} />
+      <TaskCreateAndUpdated projectId={projectId} listId={listId} setProps={setlistProps} listProps={listProps}/>
       <TasksView taskId={taskId} />
     </>
   );

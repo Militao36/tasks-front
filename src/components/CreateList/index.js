@@ -3,14 +3,16 @@ import { api } from "../../config/api";
 import { Modal } from "../Modal";
 import { toast } from "react-toastify";
 
-export function CreateList({ projectId }) {
+export function CreateList({ projectId, setProps }) {
   const [listTitle, setListTitle] = useState("")
 
   async function save() {
     try {
       if (!listTitle || !projectId) return
       await api.post('/lists', { title: listTitle, projectId })
-       return toast.success("Salvo com sucesso!")
+      setProps(true)
+  
+      return toast.success("Salvo com sucesso!")
     } catch (error) {
       return toast.success("Não foi possível salvar")
     }
