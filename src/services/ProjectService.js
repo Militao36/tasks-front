@@ -12,25 +12,30 @@ class ProjectService {
     return data
   }
 
-  async loadComments(id) {
-    const { data } = await api.get(`/comments/?type=project&id=${id}`)
+  async loadComments(id, type) {
+    const { data } = await api.get(`/comments/?type=${type}&id=${id}`)
 
     return data
   }
 
-  async comment(message, projectId, userId = '46781a2d-918b-4eda-acf9-3dd50e2c34bb') {
-    await api.post('/comments', {
+  async comment(message, id, type) {
+    const body = {
       comment: message,
-      projectId: projectId,
-      userId: userId
-    })
+    }
+    
+    if (type === 'project') {
+      body['projectId'] = id
+    } else {
+      body['taskId'] = id
+    }
+
+    await api.post('/comments', body)
   }
 
-  async updateComment(message, projectId, commentId, userId = '46781a2d-918b-4eda-acf9-3dd50e2c34bb') {
+  async updateComment(message, commentId) {
+
     await api.put(`/comments/${commentId}`, {
       comment: message,
-      projectId: projectId,
-      userId: userId
     })
   }
 

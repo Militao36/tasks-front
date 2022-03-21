@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react"
 import ProjectService from "../../services/ProjectService"
 
-export function Comments({ projectId }) {
+export function Comments({ id, type }) {
   const [comments, setComments] = useState([])
 
   const [comment, setComment] = useState({
@@ -13,11 +13,15 @@ export function Comments({ projectId }) {
   useEffect(() => {
     loadComments()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [id, type])
 
 
   async function loadComments() {
-    const data = await ProjectService.loadComments(projectId)
+    if (!id || !type) {
+      return
+    }
+
+    const data = await ProjectService.loadComments(id, type)
     setComments(data)
   }
 
@@ -27,9 +31,9 @@ export function Comments({ projectId }) {
     }
 
     if (comment.id)
-      await ProjectService.updateComment(comment.message, projectId, comment.id)
+      await ProjectService.updateComment(comment.message, comment.id)
     else
-      await ProjectService.comment(comment.message, projectId)
+      await ProjectService.comment(comment.message, id, type)
 
     await loadComments()
     setComment({

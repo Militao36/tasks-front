@@ -12,7 +12,7 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
   return (
     <div className="card p-3 mt-3" style={style}>
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
-        <span style={{ fontSize: 14 }}><i className="fa-solid fa-user-secret"></i> {user?.username || ' -'}</span>
+        <span style={{ fontSize: 14 }}>{user?.username || ' -'}</span>
 
         <div className="dropdown">
           <button className="btn btn-sm dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">

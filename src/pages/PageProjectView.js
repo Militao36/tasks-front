@@ -1,12 +1,12 @@
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { useParams } from 'react-router-dom'
-
+import { useParams } from 'react-router-dom';
 import { Card } from "../components/Card";
+import { Comments } from "../components/Comment";
 import { Editor } from "../components/Editor";
 import { Menu } from "../components/Menu";
-import { Comments } from "../components/Comment";
 import ProjectService from "../services/ProjectService";
+
 
 export function PageProjectView() {
   const { id } = useParams();
@@ -146,7 +146,7 @@ export function PageProjectView() {
               <div className="mt-4">
                 <Editor value={project.description} />
                 <hr />
-                <Comments projectId={id} />
+                <Comments id={id} type={"project"} />
               </div>
             </div>
             <div className="col-sm-3">
