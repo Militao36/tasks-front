@@ -57,7 +57,8 @@ export function PageTasksBoard() {
     setIdTaskMove("")
   }
 
-  function createTask() {
+  function createTask(idTask = "") {
+    setTaskId(idTask)
     const modal = new window.bootstrap.Modal(document.getElementById('create-task-of-modal'))
     modal.show()
   }
@@ -114,7 +115,8 @@ export function PageTasksBoard() {
                             ...task,
                             border: "5px solid #343a40",
                             setIdTaskMove: setIdTaskMove,
-                            click: () => viewTask(task.id)
+                            click: () => viewTask(task.id),
+                            edit: ()=> createTask(task.id)
                           }
                         }
                       />
@@ -127,7 +129,7 @@ export function PageTasksBoard() {
         </div>
       </div >
       <CreateList projectId={projectId} setProps={setlistProps} />
-      <TaskCreateAndUpdated projectId={projectId} listId={listId} setProps={setlistProps} listProps={listProps}/>
+      <TaskCreateAndUpdated projectId={projectId} listId={listId} setProps={setlistProps} listProps={listProps} idTask={taskId}/>
       <TasksView taskId={taskId} />
     </>
   );

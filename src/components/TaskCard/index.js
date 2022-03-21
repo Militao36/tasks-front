@@ -2,13 +2,12 @@
 import { DateTime } from 'luxon'
 import './style.css'
 
-export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove } }) {
+export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove, edit } }) {
   const style = {
     marginLeft: "2px",
     backgroundColor: '#f8f9fa',
     borderTop: "5px solid #212529",
   }
-
   return (
     <div className="card p-3 mt-3" style={style}>
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
@@ -27,8 +26,8 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
             <li className="dropdown-item">
               Excluir
             </li>
-            <li className="dropdown-item">
-              Visualizar
+            <li className="dropdown-item" onClick={edit}>
+              Editar
             </li>
           </ul>
         </div>
