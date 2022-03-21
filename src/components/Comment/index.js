@@ -33,7 +33,7 @@ export function Comments({ id, type }) {
     if (comment.id)
       await ProjectService.updateComment(comment.message, comment.id)
     else
-      await ProjectService.comment(comment.message, id)
+      await ProjectService.comment(comment.message, id, type)
 
     await loadComments()
     setComment({

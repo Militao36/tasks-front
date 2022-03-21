@@ -22,7 +22,7 @@ class ProjectService {
     const body = {
       comment: message,
     }
-
+    
     if (type === 'project') {
       body['projectId'] = id
     } else {
