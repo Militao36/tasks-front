@@ -6,7 +6,7 @@ import { Editor } from '../Editor'
 import { Modal } from '../Modal'
 
 
-export function TaskCreateAndUpdated({ projectId, listId }) {
+export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps }) {
   const { users } = useContext(ContextUsers)
 
   const [task, setTask] = useState({
@@ -32,13 +32,12 @@ export function TaskCreateAndUpdated({ projectId, listId }) {
   }
   async function save() {
     try {
-      const response = await api.post(`/tasks`, {
+      await api.post(`/tasks`, {
         ...task,
         projectId: projectId,
         listId: listId
       })
-      notificationSuccess("Tarefa criada com sucesso")
-      console.log({ response })
+      setProps(!listProps)
     } catch (error) {
       notificationError("Não foi possível atualizar/criar, tente novamente")
     }
