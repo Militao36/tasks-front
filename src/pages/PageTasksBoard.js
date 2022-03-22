@@ -28,6 +28,7 @@ export function PageTasksBoard() {
   }, [projectId])
 
   useEffect(() => {
+    if(projectId !== "")
     listTasks()
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -116,7 +117,9 @@ export function PageTasksBoard() {
                             border: "5px solid #343a40",
                             setIdTaskMove: setIdTaskMove,
                             click: () => viewTask(task.id),
-                            edit: ()=> createTask(task.id)
+                            edit: ()=> createTask(task.id),
+                            listProps: listProps,
+                            setlistProps:setlistProps
                           }
                         }
                       />
