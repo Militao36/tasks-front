@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { DateTime } from 'luxon'
 import './style.css'
+import { api } from '../../config/api';
 
 export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove, edit } }) {
   const style = {
@@ -8,6 +9,22 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
     backgroundColor: '#f8f9fa',
     borderTop: "5px solid #212529",
   }
+
+const startTask = async () => {
+  try {
+    await api.put(`/tasks/${id}`, {startDate: DateTime.local()})
+  } catch (error) {
+    
+  }
+}
+const andTask = async () => {
+  try {
+    await api.put(`/tasks/${id}`, {andDate: DateTime.local()})
+  } catch (error) {
+    
+  }
+}
+
   return (
     <div className="card p-3 mt-3" style={style}>
       <div className="d-flex justify-content-between" style={{ color: "#666", fontSize: 12 }}>
@@ -23,11 +40,20 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
             <li>
               <hr className="dropdown-divider" />
             </li>
+            <li className="dropdown-item" onClick={edit}>
+              Editar
+            </li>
             <li className="dropdown-item">
               Excluir
             </li>
-            <li className="dropdown-item" onClick={edit}>
-              Editar
+            <li>
+              <hr className="dropdown-divider" />
+            </li>
+            <li className="dropdown-item" onClick={startTask}>
+              Iniciar
+            </li>
+            <li className="dropdown-item" onClick={andTask}>
+              Finalizar
             </li>
           </ul>
         </div>
