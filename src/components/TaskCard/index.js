@@ -3,7 +3,7 @@ import { DateTime } from 'luxon';
 import { api } from '../../config/api';
 import './style.css';
 
-export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove, edit, home = false } }) {
+export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove, edit, home = false, setlistProps, listProps } }) {
   const style = {
     marginLeft: "2px",
     backgroundColor: '#f8f9fa',
@@ -13,6 +13,7 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
   const setStartTask = async () => {
     try {
       await api.put(`/tasks/${id}`, { startDate: DateTime.local() })
+      setlistProps(!listProps)
     } catch (error) {
 
     }
@@ -20,6 +21,7 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
   const setEndDate = async () => {
     try {
       await api.put(`/tasks/${id}`, { endDate: DateTime.local() })
+      setlistProps(!listProps)
     } catch (error) {
 
     }
@@ -28,6 +30,7 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
   const retormaTarefa = async () => {
     try {
       await api.put(`/tasks/${id}`, { endDate: null, startDate: null })
+      setlistProps(!listProps)
     } catch (error) {
 
     }

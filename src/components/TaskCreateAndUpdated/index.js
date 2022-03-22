@@ -65,6 +65,7 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps, i
           projectId: projectId,
           listId: listId
         })
+        return setProps(!listProps)
       }
     } catch (error) {
       notificationError("Não foi possível atualizar/criar, tente novamente")

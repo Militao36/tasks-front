@@ -7,7 +7,7 @@ import { Editor } from "../Editor";
 import { Modal } from "../Modal";
 
 
-export function TasksView({ taskId }) {
+export function TasksView({ taskId, listProps }) {
   const [tasks, setTasks] = useState({
     id: "",
     title: "",
@@ -37,6 +37,9 @@ export function TasksView({ taskId }) {
       getTask(taskId)
     }
   }, [taskId])
+  useEffect(() => {
+      getTask(taskId)
+  }, [listProps])
 
   const getTask = async (id) => {
     try {
