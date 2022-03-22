@@ -10,7 +10,7 @@ export function PageHome() {
   const statusTasks = 'in-progress'
 
   useEffect(() => {
-    api.get(`/tasks/${statusTasks}`)
+    api.get(`/tasks/status/${statusTasks}`)
       .then(({ data }) => {
         setTasksInProgress(data === ''? [] : data)
       })
@@ -25,10 +25,11 @@ export function PageHome() {
         </div>
         <div className="col-sm-2 col-md-4">
           <h5 className="card-title text-start">Tarefas em andamento</h5>
-          {tasksInProgress.map((task) => {
+          {tasksInProgress.map((task, index) => {
             return (
               <TaskCard
-                key={task.id}
+                key={index}
+                iD
                 title={task.title}
                 username={task.user.username}
                 time={`Inicio: ${DateTime.fromISO(task.startDate).toFormat("dd/MM/yyyy HH:mm")}`}
