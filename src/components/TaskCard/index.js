@@ -1,7 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import { DateTime } from 'luxon'
-import './style.css'
+import { DateTime } from 'luxon';
 import { api } from '../../config/api';
+import './style.css';
 
 export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove, edit } }) {
   const style = {
@@ -10,20 +10,28 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
     borderTop: "5px solid #212529",
   }
 
-const startTask = async () => {
-  try {
-    await api.put(`/tasks/${id}`, {startDate: DateTime.local()})
-  } catch (error) {
-    
+  const setStartTask = async () => {
+    try {
+      await api.put(`/tasks/${id}`, { startDate: DateTime.local() })
+    } catch (error) {
+
+    }
   }
-}
-const andTask = async () => {
-  try {
-    await api.put(`/tasks/${id}`, {andDate: DateTime.local()})
-  } catch (error) {
-    
+  const setEndDate = async () => {
+    try {
+      await api.put(`/tasks/${id}`, { endDate: DateTime.local() })
+    } catch (error) {
+
+    }
   }
-}
+
+  const retormaTarefa = async () => {
+    try {
+      await api.put(`/tasks/${id}`, { endDate: null, startDate: null })
+    } catch (error) {
+
+    }
+  }
 
   return (
     <div className="card p-3 mt-3" style={style}>
@@ -49,11 +57,14 @@ const andTask = async () => {
             <li>
               <hr className="dropdown-divider" />
             </li>
-            <li className="dropdown-item" onClick={startTask}>
+            <li className="dropdown-item" onClick={setStartTask}>
               Iniciar
             </li>
-            <li className="dropdown-item" onClick={andTask}>
+            <li className="dropdown-item" onClick={setEndDate}>
               Finalizar
+            </li>
+            <li className="dropdown-item" onClick={retormaTarefa}>
+              Retomar Tarefa
             </li>
           </ul>
         </div>
