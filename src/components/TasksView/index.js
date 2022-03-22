@@ -69,6 +69,8 @@ export function TasksView({ taskId }) {
 
       setTasks({
         ...data,
+        startDate: startDate?.toFormat("dd/MM/yyyy HH:mm"),
+        endDate: endDate?.toFormat("dd/MM/yyyy HH:mm"),
         timePast: {
           days: timePast?.days || 0,
           hours: timePast?.hours || 0,
