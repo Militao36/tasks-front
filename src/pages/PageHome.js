@@ -1,8 +1,7 @@
-import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { Menu } from "../components/Menu";
-import { ProjectList } from '../components/ProjectList'
-import { TaskCard } from '../components/TaskCard'
+import { ProjectList } from '../components/ProjectList';
+import { TaskCard } from '../components/TaskCard';
 import { api } from "../config/api";
 
 export function PageHome() {
@@ -12,7 +11,7 @@ export function PageHome() {
   useEffect(() => {
     api.get(`/tasks/status/${statusTasks}`)
       .then(({ data }) => {
-        setTasksInProgress(data === ''? [] : data)
+        setTasksInProgress(data)
       })
   }, [])
 
@@ -28,11 +27,17 @@ export function PageHome() {
           {tasksInProgress.map((task, index) => {
             return (
               <TaskCard
-                key={index}
-                iD
-                title={task.title}
-                username={task.user.username}
-                time={`Inicio: ${DateTime.fromISO(task.startDate).toFormat("dd/MM/yyyy HH:mm")}`}
+                key={task.id}
+                task={
+                  {
+                    ...task,
+                    border: "5px solid #343a40",
+                    setIdTaskMove: "",
+                    click: () => { },
+                    edit: () => { },
+                    home: true
+                  }
+                }
               />
             )
           })}
