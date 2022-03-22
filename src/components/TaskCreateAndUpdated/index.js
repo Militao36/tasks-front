@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useContext, useState, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { api } from '../../config/api'
 import ContextUsers from '../../context/ContextUsers'
@@ -6,7 +6,7 @@ import { Editor } from '../Editor'
 import { Modal } from '../Modal'
 
 
-export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps }) {
+export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps, idTask }) {
   const { users } = useContext(ContextUsers)
 
   const [task, setTask] = useState({
@@ -20,11 +20,10 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps })
     listId: listId
   })
 
-  const notificationSuccess = (message) => {
-    toast.success(message, {
-      position: toast.POSITION.BOTTOM_RIGHT
-    })
-  }
+  useEffect(() => {
+    getTask(idTask)
+  }, [idTask])
+
   const notificationError = (message) => {
     toast.success(message, {
       position: toast.POSITION.BOTTOM_RIGHT
@@ -32,16 +31,50 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps })
   }
   async function save() {
     try {
-      await api.post(`/tasks`, {
-        ...task,
-        projectId: projectId,
-        listId: listId
-      })
-      setProps(!listProps)
+      if (task.id === "") {
+        await api.post(`/tasks`, {
+          ...task,
+          projectId: projectId,
+          listId: listId
+        })
+        setTask({
+          id: "",
+          title: "",
+          branch: "",
+          userId: "",
+          deliveryDate: "",
+          description: "",
+          projectId: projectId,
+          listId: listId
+        })
+        return setProps(!listProps)
+      }
+      else{
+        await api.put(`/tasks/${task.id}`, {
+          ...task,
+          projectId: projectId,
+          listId: listId
+        })
+        setTask({
+          id: "",
+          title: "",
+          branch: "",
+          userId: "",
+          deliveryDate: "",
+          description: "",
+          projectId: projectId,
+          listId: listId
+        })
+      }
     } catch (error) {
       notificationError("Não foi possível atualizar/criar, tente novamente")
     }
 
+  }
+
+  async function getTask(id) {
+    const { data } = await api.get(`/tasks/${id}`)
+    setTask(data)
   }
 
   return (
@@ -55,6 +88,7 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps })
                 className="form-control form-control-sm"
                 type="text"
                 onChange={(e) => setTask({ ...task, title: e.target.value })}
+                value={task.title}
               />
             </div>
             <div className='col-sm-3'>
@@ -62,6 +96,7 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps })
               <input
                 className="form-control form-control-sm"
                 type="text"
+                value={task.branch}
                 onChange={(e) => setTask({ ...task, branch: e.target.value })}
               />
             </div>
@@ -71,7 +106,7 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps })
                 <select
                   className="form-select form-select-sm"
                   defaultValue={null} aria-label=".form-select-sm example"
-                  value={task.status}
+                  value={task.userId}
                   onChange={(e) => setTask({ ...task, userId: e.target.value })}
                 >
                   <option value={null}>Selecione</option>
@@ -88,6 +123,7 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps })
               <input
                 className="form-control form-control-sm"
                 type="date"
+                value={task.deliveryDate}
                 onChange={(e) => setTask({ ...task, deliveryDate: e.target.value })}
               />
             </div>
