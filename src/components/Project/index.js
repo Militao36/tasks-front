@@ -1,91 +1,22 @@
-import { useContext, useEffect, useState } from 'react'
-import ContextUser from '../../context/ContextUsers'
+import { useState } from 'react'
+
+import { useUsers } from '../../hooks/useUsers'
+import { useProject } from '../../hooks/useProject'
+
 import { Editor } from '../Editor'
 import { Card } from '../Card'
-import ProjectService from '../../services/ProjectService'
-import { toast } from 'react-toastify'
 
-export function ProjectCreateAndUpdated({ id }) {
-  const { users } = useContext(ContextUser)
-
+export function ProjectCreateAndUpdated({ id, reload = () => { } }) {
+  const [users] = useUsers()
+  const [setProject, project, addUser, createOrUpdated] = useProject(id)
 
   const [userSelect, setUserSelect] = useState('')
 
-  const [project, setProject] = useState({
-    id: "",
-    title: "",
-    description: "",
-    users: [],
-    deliveryDate: "",
-    expectedDate: "",
-    status: ""
-  })
-
-  function addUser(member = []) {
-    if (member.length === 0) {
-      return;
-    }
-
-    const userExists = project.users.filter((user) => user.id === member[0].id)
-
-    if (userExists.length === 0) {
-      setProject({
-        ...project,
-        users: [
-          ...project.users,
-          member[0]
-        ]
-      })
-    }
-  }
-
-  async function create() {
-    try {
-      if (!id) {
-        await ProjectService.create(project)
-        return toast.success("Projeto salvo com sucesso", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-      } else {
-        await ProjectService.update(id, project)
-        return toast.success("Projeto editado com sucesso", {
-          position: toast.POSITION.BOTTOM_RIGHT
-        })
-      }
-    } catch (error) {
-      
-      return toast.success("Não foi possível atualizar ou editar, tente novamente", {
-        position: toast.POSITION.BOTTOM_RIGHT
-      })
-    }
-  }
-
-  async function findById() {
-    if (!id) {
-      return
-    }
-
-    const data = await ProjectService.findById(id)
-    setProject({
-      id: id,
-      title: data.title,
-      description: data.description,
-      deliveryDate: data.deliveryDate ? String(data.deliveryDate).substring(0, 10) : "",
-      expectedDate: String(data.expectedDate).substring(0, 10),
-      status: data.status,
-      users: data.users
-    })
-  }
-
-  useEffect(() => {
-    findById()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [id])
 
   return (
     <Card>
       <div className="row">
-        <div className='col-sm-6'>
+        <div className='col-sm-5'>
           <label htmlFor="">Nome do Projeto</label>
           <input
             className="form-control form-control-sm"
@@ -103,7 +34,7 @@ export function ProjectCreateAndUpdated({ id }) {
             onChange={(e) => setProject({ ...project, deliveryDate: e.target.value })}
           />
         </div>
-        <div className='col-sm-2'>
+        <div className='col-sm-3'>
           <label htmlFor="">Data Prevista de Entrega</label>
           <input
             className="form-control form-control-sm"
@@ -130,7 +61,7 @@ export function ProjectCreateAndUpdated({ id }) {
           />
         </div>
         <div className='mt-3 row'>
-          <div className="col-sm-5">
+          <div className="col-sm-4">
             <label htmlFor="">Membros</label>
             <div className="input-group">
               <select className="form-select form-select-sm" defaultValue={null} onChange={(e) => setUserSelect(e.target.value)} aria-label=".form-select-sm example">
@@ -145,7 +76,7 @@ export function ProjectCreateAndUpdated({ id }) {
             </div>
           </div>
 
-          <div className="col-sm-7">
+          <div className="col-sm-8">
             <table className="table mt-3">
               <thead>
                 <tr>
@@ -171,7 +102,10 @@ export function ProjectCreateAndUpdated({ id }) {
           </div>
         </div>
         <div className='col-sm-12 d-flex justify-content-end'>
-          <button className='btn btn-sm btn-dark' onClick={create}>Salvar informações</button>
+          <button className='btn btn-sm btn-dark' onClick={async () => {
+            await createOrUpdated()
+            reload()
+          }}>Salvar informações</button>
         </div>
       </div>
     </Card>

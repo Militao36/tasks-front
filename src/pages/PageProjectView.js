@@ -6,11 +6,12 @@ import { Comments } from "../components/Comment";
 import { Editor } from "../components/Editor";
 import { Menu } from "../components/Menu";
 import ProjectService from "../services/ProjectService";
-
+import { Modal } from "../components/Modal";
+import { ProjectCreateAndUpdated } from "../components/Project";
+import { api } from "../config/api";
 
 export function PageProjectView() {
   const { id } = useParams();
-
   const [project, setProject] = useState({
     id: "",
     title: "",
@@ -38,7 +39,7 @@ export function PageProjectView() {
   useEffect(() => {
     findById()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [id])
 
 
   async function findById() {
@@ -94,6 +95,26 @@ export function PageProjectView() {
     })
   }
 
+  function reload() {
+    findById()
+  }
+
+  function openModalTaskEdit() {
+    const modal = new window.bootstrap.Modal(document.getElementById('create-project-of-modal'))
+    modal.show()
+  }
+
+  async function setStartDate() {
+    await api.put(`/projects/${id}`, { startDate: DateTime.local().toFormat("yyyy-MM-dd HH:mm") })
+    reload()
+  }
+
+  async function setEndDate() {
+    await api.put(`/projects/${id}`, { endDate: DateTime.local().toFormat("yyyy-MM-dd HH:mm")   })
+    reload()
+  }
+
+
   return (
     <>
       <Menu />
@@ -133,7 +154,7 @@ export function PageProjectView() {
                   </div>
                 </div>
                 <div className="col-sm-4 d-flex align-items-stretch">
-                  <div className="card shadow-sm"  style={{ flex: 1 }}>
+                  <div className="card shadow-sm" style={{ flex: 1 }}>
                     <div className="card-body text-center">
                       <h5 className="card-title text-muted">Tempo de Atraso (Entrega) <i className="fa-solid fa-clock text-danger"></i></h5>
                       <b className="card-text text-center text-muted mb-0">
@@ -150,7 +171,7 @@ export function PageProjectView() {
               </div>
             </div>
             <div className="col-sm-3">
-              <div className="">
+              <div>
                 <h3 className="bg-success text-light p-3 rounded" ><i className="fa-brands fa-buffer"></i>
                   {project.title}
                 </h3>
@@ -194,12 +215,17 @@ export function PageProjectView() {
                 </table>
               </div>
               <div className="mt-3 mb-3">
-
+                <button className="btn btn-sm btn-success" style={{ marginRight: 5 }} onClick={setStartDate}>Iniciar Projeto</button>
+                <button className="btn btn-sm btn-danger" style={{ marginRight: 5 }} onClick={setEndDate}>Finalizar Projeto</button>
+                <button className="btn btn-sm btn-primary" style={{ marginRight: 5 }} onClick={openModalTaskEdit}>Editar</button>
               </div>
             </div>
           </div>
         </Card>
       </div>
+      <Modal title={"Cadastro de Projetos"} ID={"create-project-of-modal"}>
+        <ProjectCreateAndUpdated id={id} reload={reload} />
+      </Modal>
     </>
   )
 }
