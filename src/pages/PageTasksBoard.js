@@ -27,47 +27,45 @@ export function PageTasksBoard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [projectId])
 
-  useEffect(() => {
-    if(projectId !== "")
-    listTasks()
+  async function listTasks() {
+    const response = await api.get(`/lists?projectId=${projectId}`)
+    const data = response.data || []
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listProps])
+    const getTasks = await api.get(`/tasks?projectId=${projectId}`)
 
-  function listTasks() {
-    api.get(`/lists?projectId=${projectId}`)
-      .then(async ({ data = [] }) => {
-        const getTasks = await api.get(`/tasks?projectId=${projectId}`)
+    const lists = data.map((value) => {
+      value.tasks = getTasks.data.filter((task) => task.listId === value.id)
+      return value
+    })
 
-        const lists = data.map((value) => {
-          value.tasks = getTasks.data.filter((task) => task.listId === value.id)
-          return value
-        })
-
-        setTasks(lists)
-      })
+    setTasks(lists)
   }
 
   async function move(type, listId) {
     if (!idTaskMove) {
       return
     }
-    
+
     await api.post('/tasks/task/move', { type, listId, taskId: idTaskMove })
     listTasks()
     setIdTaskMove("")
   }
 
-  function createTask(idTask = "") {
-    setTaskId(idTask)
+  function createTask(id) {
+    setTaskId("")
+    setListId(id)
     const modal = new window.bootstrap.Modal(document.getElementById('create-task-of-modal'))
     modal.show()
   }
 
-  function viewTask(idTask) {
-    setTaskId(idTask)
+  function viewTask(id) {
+    setTaskId(id)
     const modal = new window.bootstrap.Modal(document.getElementById('task-view'))
     modal.show()
+  }
+
+  async function reload() {
+    await listTasks()
   }
 
   return (
@@ -80,7 +78,7 @@ export function PageTasksBoard() {
           </div>
           <div className="d-none d-sm-block mt-2">
             <button className="btn btn-sm btn-success"
-              data-bs-toggle="modal" data-bs-target="#exampleModal"
+              data-bs-toggle="modal" data-bs-target="#create-list-of-modal"
               style={{ marginLeft: 20 }}>
               <i className="fa-solid fa-plus me-2"></i>
               New List
@@ -93,6 +91,12 @@ export function PageTasksBoard() {
             return (
               <div key={value.id} className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
                 <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center" style={{ borderRadius: '5px 5px 0 0' }}>
+
+                  <button className="btn btn-sm btn-primary"
+                    data-bs-toggle="modal" data-bs-target="#create-list-of-modal"
+                    onClick={() => setListId(value.id)}>
+                    <i className="fa-solid fa-pen-to-square"></i>
+                  </button>
                   {
                     (idTaskMove && value.tasks.filter(v => v.id === idTaskMove).length === 0)
                     &&
@@ -101,10 +105,7 @@ export function PageTasksBoard() {
                   <p>{value.title}</p>
                   <i className="fa-solid fa-square-plus me-2"
                     style={{ cursor: 'pointer' }}
-                    onClick={() => {
-                      setListId(value.id)
-                      createTask()
-                    }}></i>
+                    onClick={() => createTask(value.id)}></i>
                 </div>
                 <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
                   {value.tasks.map((task) => {
@@ -117,9 +118,9 @@ export function PageTasksBoard() {
                             border: "5px solid #343a40",
                             setIdTaskMove: setIdTaskMove,
                             click: () => viewTask(task.id),
-                            edit: ()=> createTask(task.id),
+                            edit: () => createTask(task.id),
                             listProps: listProps,
-                            setlistProps:setlistProps
+                            setlistProps: setlistProps
                           }
                         }
                       />
@@ -131,9 +132,9 @@ export function PageTasksBoard() {
           })}
         </div>
       </div >
-      <CreateList projectId={projectId} setProps={setlistProps} />
-      <TaskCreateAndUpdated projectId={projectId} listId={listId} setProps={setlistProps} listProps={listProps} idTask={taskId}/>
-      <TasksView taskId={taskId} />
+      <CreateList projectId={projectId} idList={listId} reload={reload} />
+      <TasksView taskId={taskId} reload={reload} />
+      <TaskCreateAndUpdated projectId={projectId} listId={listId} idTask={taskId} reload={reload} />
     </>
   );
 }

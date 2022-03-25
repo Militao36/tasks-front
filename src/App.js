@@ -11,15 +11,15 @@ import { FormLogin } from './pages/PageLogin';
 
 function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<FormLogin />} exact />
-        <Route path="/home" element={<PageHome />} exact />
-        <Route path="/tasks" element={<TaskCreateAndUpdated />} exact />
-        <Route path="/tasks/board/:projectId" element={<PageTasksBoard />} exact />
-        <Route path="/project/view/:id" element={<PageProjectView />} exact />
-      </Routes>
-    </BrowserRouter>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<FormLogin />} exact />
+          <Route path="/home" element={<PageHome />} exact />
+          <Route path="/tasks" element={<TaskCreateAndUpdated />} exact />
+          <Route path="/tasks/board/:projectId" element={<PageTasksBoard />} exact />
+          <Route path="/project/view/:id" element={<PageProjectView />} exact />
+        </Routes>
+      </BrowserRouter>
   )
 }
 

@@ -1,21 +1,25 @@
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
 import { api } from "../../config/api";
+import { useUsers } from "../../hooks/useUsers";
 import { Card } from "../Card";
 import { Comments } from "../Comment";
 import { Editor } from "../Editor";
 import { Modal } from "../Modal";
 
 
-export function TasksView({ taskId, listProps }) {
+export function TasksView({ taskId, reload = () => { } }) {
+  const [users] = useUsers()
+
   const [tasks, setTasks] = useState({
-    id: "",
+    id: taskId,
     title: "",
     description: "",
     branch: "",
     startDate: "",
     endDate: "",
     deliveryDate: "",
+    userId: "",
     user: {
       id: "",
       username: ""
@@ -37,60 +41,79 @@ export function TasksView({ taskId, listProps }) {
       getTask(taskId)
     }
   }, [taskId])
-  useEffect(() => {
-      getTask(taskId)
-  }, [listProps])
 
   const getTask = async (id) => {
-    try {
-      const { data } = await api.get(`/tasks/${id}`)
-      const date = DateTime.local()
-      const startDate = data.startDate ? DateTime.fromISO(data.startDate) : null
-      const endDate = data.endDate ? DateTime.fromISO(data.endDate) : null
-      const deliveryDate = data.deliveryDate ? DateTime.fromISO(data.deliveryDate) : null
+    const { data } = await api.get(`/tasks/${id}`)
 
-      // tempo passado
-      let timePast = null
+    const date = DateTime.local()
+    const startDate = data.startDate ? DateTime.fromISO(data.startDate) : null
+    const endDate = data.endDate ? DateTime.fromISO(data.endDate) : null
+    const deliveryDate = data.deliveryDate ? DateTime.fromISO(data.deliveryDate) : null
 
-      // data prevista
-      let dateExpectedDate = null
+    // tempo passado
+    let timePast = null
 
-      if (startDate?.isValid) {
-        timePast = endDate?.isValid ?
-          endDate.diff(startDate, ['day', 'hour', 'minute']).toObject()
-          :
-          date.diff(startDate, ['day', 'hour', 'minute']).toObject()
+    // data prevista
+    let dateExpectedDate = null
+
+    if (startDate?.isValid) {
+      timePast = endDate?.isValid ?
+        endDate.diff(startDate, ['day', 'hour', 'minute']).toObject()
+        :
+        date.diff(startDate, ['day', 'hour', 'minute']).toObject()
+    }
+
+    if (endDate?.isValid) {
+      dateExpectedDate = deliveryDate?.isValid ?
+        deliveryDate.diff(endDate, ['day', 'hour', 'minute'])?.toObject()
+        :
+        date.diff(endDate, ['day', 'hour', 'minute']).toObject()
+    }
+
+
+    setTasks({
+      id: data.id,
+      title: data.title,
+      branch: data.branch,
+      description: data.description,
+      startDate: startDate?.toFormat("yyyy-MM-dd'T'HH:mm") || "",
+      endDate: endDate?.toFormat("yyyy-MM-dd'T'HH:mm") || "",
+      userId: data.userId,
+      deliveryDate: deliveryDate?.toFormat("yyyy-MM-dd'T'HH:mm") || "",
+      timePast: {
+        days: timePast?.days || 0,
+        hours: timePast?.hours || 0,
+        minutes: timePast?.minutes?.toFixed(0) || 0,
+      },
+      deliveryDateObject: {
+        days: dateExpectedDate?.days || 0,
+        hours: dateExpectedDate?.hours || 0,
+        minutes: dateExpectedDate?.minutes?.toFixed(0) || 0,
       }
+    })
 
-      if (endDate?.isValid) {
-        dateExpectedDate = deliveryDate?.isValid ?
-          deliveryDate.diff(endDate, ['day', 'hour', 'minute'])?.toObject()
-          :
-          date.diff(endDate, ['day', 'hour', 'minute']).toObject()
-      }
+  }
 
+  function change(key, value) {
+    setTasks({
+      ...tasks,
+      [key]: value
+    })
+  }
 
-      setTasks({
-        ...data,
-        startDate: startDate?.toFormat("dd/MM/yyyy HH:mm"),
-        endDate: endDate?.toFormat("dd/MM/yyyy HH:mm"),
-        timePast: {
-          days: timePast?.days || 0,
-          hours: timePast?.hours || 0,
-          minutes: timePast?.minutes?.toFixed(0) || 0,
-        },
-        deliveryDateObject: {
-          days: dateExpectedDate?.days || 0,
-          hours: dateExpectedDate?.hours || 0,
-          minutes: dateExpectedDate?.minutes?.toFixed(0) || 0,
-        }
-      })
-    } catch (error) { }
+  async function update() {
+    await api.put(`/tasks/${tasks.id}`, {
+      ...tasks,
+      startDate: tasks.startDate?.split("T").join(" ") || null,
+      endDate: tasks.endDate?.split("T").join(" ") || null,
+      deliveryDate: tasks.deliveryDate?.split("T").join(" ") || null,
+    })
+    await reload()
   }
 
   return (
     <>
-      <Modal title={"Detalhes da tarefa"} ID="task-view">
+      <Modal title={"Detalhes da tarefa"} ID="task-view" xl={true}>
         <div className="container-fluid">
           <Card>
             <div className="row" style={{ minHeight: '80vh' }}>
@@ -127,7 +150,7 @@ export function TasksView({ taskId, listProps }) {
                 </div>
               </div>
               <div className="col-sm-3">
-                <div className="">
+                <div>
                   <h3 className="bg-success text-light p-3 rounded" >
                     <i className="fa-brands fa-buffer me-2"></i>
                     {tasks.title}
@@ -135,23 +158,32 @@ export function TasksView({ taskId, listProps }) {
                 </div>
                 <div className="text-muted mt-3">
                   <p className="text-sm mt-2">Branch
-                    <b className="d-block">{tasks.branch || "Principal"}</b>
+                    <input className="form-control form-control-sm me-2" type="text" value={tasks.branch} onChange={(e) => change("branch", e.target.value)} />
                   </p>
 
                   <p className="text-sm mt-2">Inicio
-                    <b className="d-block">{tasks.startDate || "Aguardando"}</b>
+                    <input className="form-control form-control-sm me-2" type="datetime-local" value={tasks.startDate} onChange={(e) => change('startDate', e.target.value)} />
                   </p>
                   <p className="text-sm mt-2">Fim
-                    <b className="d-block">{tasks.endDate || "Aguardando"}</b>
+                    <input className="form-control form-control-sm me-2" type="datetime-local" value={tasks.endDate} onChange={(e) => change('endDate', e.target.value)} />
                   </p>
 
                   <p className="text-sm mt-2">Data de Entrega
-                    <b className="d-block">{tasks.deliveryDate || "Sem data de entrega"}</b>
+                    <input className="form-control form-control-sm me-2" type="datetime-local" value={tasks.deliveryDate} onChange={(e) => change('deliveryDate', e.target.value)} />
                   </p>
 
-                  <p className="text-sm mt-2">Membro
-                    <b className="d-block">{tasks.user.username}</b>
+                  <p className="text-sm mt-2">Usuário:
+                    <select className="form-select form-select-sm" onChange={(e) => change('userId', e.target.value)} value={tasks.userId}>
+                      {users.map((user) => {
+                        return (
+                          <option key={user.id} value={user.id}>{user.username}</option>
+                        )
+                      })}
+                    </select>
                   </p>
+                </div>
+                <div className="mt-3 mb-3">
+                  <button className="btn btn-sm btn-success" style={{ marginRight: 5, float: 'right' }} onClick={update}>Salvar Alterações</button>
                 </div>
               </div>
             </div>

@@ -1,13 +1,12 @@
-import { useContext, useState, useEffect } from 'react'
-import { toast } from 'react-toastify'
+import { useState, useEffect } from 'react'
 import { api } from '../../config/api'
-import ContextUsers from '../../context/ContextUsers'
+import { useUsers } from '../../hooks/useUsers'
 import { Editor } from '../Editor'
 import { Modal } from '../Modal'
 
 
-export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps, idTask }) {
-  const { users } = useContext(ContextUsers)
+export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () => { } }) {
+  const [users] = useUsers()
 
   const [task, setTask] = useState({
     id: "",
@@ -21,56 +20,37 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps, i
   })
 
   useEffect(() => {
-    getTask(idTask)
-  }, [idTask])
+    if (idTask) {
+      getTask(idTask)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
-  const notificationError = (message) => {
-    toast.success(message, {
-      position: toast.POSITION.BOTTOM_RIGHT
+
+  async function save() {
+    await api.post(`/tasks`, {
+      ...task,
+      projectId: projectId,
+      listId: listId
+    })
+
+  }
+
+  async function update() {
+    await api.put(`/tasks/${task.id}`, {
+      ...task,
+      projectId: projectId,
+      listId: listId
     })
   }
-  async function save() {
-    try {
-      if (task.id === "") {
-        await api.post(`/tasks`, {
-          ...task,
-          projectId: projectId,
-          listId: listId
-        })
-        setTask({
-          id: "",
-          title: "",
-          branch: "",
-          userId: "",
-          deliveryDate: "",
-          description: "",
-          projectId: projectId,
-          listId: listId
-        })
-        return setProps(!listProps)
-      }
-      else{
-        await api.put(`/tasks/${task.id}`, {
-          ...task,
-          projectId: projectId,
-          listId: listId
-        })
-        setTask({
-          id: "",
-          title: "",
-          branch: "",
-          userId: "",
-          deliveryDate: "",
-          description: "",
-          projectId: projectId,
-          listId: listId
-        })
-        return setProps(!listProps)
-      }
-    } catch (error) {
-      notificationError("Não foi possível atualizar/criar, tente novamente")
-    }
 
+  async function handle() {
+    if (task.id === "") {
+      await save()
+    } else {
+      await update()
+    }
+    await reload()
   }
 
   async function getTask(id) {
@@ -106,7 +86,7 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps, i
               <div className="input-group">
                 <select
                   className="form-select form-select-sm"
-                  defaultValue={null} aria-label=".form-select-sm example"
+                  aria-label=".form-select-sm example"
                   value={task.userId}
                   onChange={(e) => setTask({ ...task, userId: e.target.value })}
                 >
@@ -140,7 +120,7 @@ export function TaskCreateAndUpdated({ projectId, listId, setProps, listProps, i
             </div>
           </div>
           <div className='col-sm-12 d-flex justify-content-end mt-3'>
-            <button className='btn btn-sm btn-success' onClick={() => save()}>Salvar informações</button>
+            <button className='btn btn-sm btn-success' onClick={() => handle()}>Salvar informações</button>
           </div>
         </div>
       </div>
