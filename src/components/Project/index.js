@@ -8,7 +8,7 @@ import { Card } from '../Card'
 
 export function ProjectCreateAndUpdated({ id, reload = () => { } }) {
   const [users] = useUsers()
-  const [setProject, project, addUser, createOrUpdated] = useProject(id)
+  const [setProject, project, addUser, createOrUpdated, removeUserOfProject] = useProject(id)
 
   const [userSelect, setUserSelect] = useState('')
 
@@ -16,40 +16,13 @@ export function ProjectCreateAndUpdated({ id, reload = () => { } }) {
   return (
     <Card>
       <div className="row">
-        <div className='col-sm-5'>
+        <div className='col-sm-6'>
           <label htmlFor="">Nome do Projeto</label>
           <input
             className="form-control form-control-sm"
             type="text"
             value={project.title}
             onChange={(e) => setProject({ ...project, title: e.target.value })}
-          />
-        </div>
-        <div className='col-sm-2'>
-          <label htmlFor="">Data de Entrega</label>
-          <input
-            className="form-control form-control-sm"
-            type="date"
-            value={project.deliveryDate}
-            onChange={(e) => setProject({ ...project, deliveryDate: e.target.value })}
-          />
-        </div>
-        <div className='col-sm-3'>
-          <label htmlFor="">Data Prevista de Entrega</label>
-          <input
-            className="form-control form-control-sm"
-            type="date"
-            value={project.expectedDate}
-            onChange={(e) => setProject({ ...project, expectedDate: e.target.value })}
-          />
-        </div>
-        <div className='col-sm-2'>
-          <label htmlFor="">Status</label>
-          <input
-            className="form-control form-control-sm"
-            type="text"
-            value={project.status || "Rascunho"}
-            disabled
           />
         </div>
         <div className='col-sm-12 mt-3'>
@@ -90,7 +63,10 @@ export function ProjectCreateAndUpdated({ id, reload = () => { } }) {
                     <tr key={value.id}>
                       <td>{value.username}</td>
                       <td>
-                        <button className='btn btn-sm btn-danger'>
+                        <button className='btn btn-sm btn-danger' onClick={async () => {
+                          await removeUserOfProject(value.id)
+                          reload()
+                        }}>
                           <i className="fa-solid fa-trash"></i>
                         </button>
                       </td>

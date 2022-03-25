@@ -16,10 +16,10 @@ export function PageProjectView() {
     id: "",
     title: "",
     description: "",
-    endDate: null,
-    startDate: null,
-    createdAt: null,
-    updatedAt: null,
+    startDate: "",
+    endDate: "",
+    createdAt: "",
+    updatedAt: "",
     status: '',
     users: [],
     timePast: {
@@ -71,13 +71,13 @@ export function PageProjectView() {
         :
         date.diff(expectedDate, ['day', 'hour', 'minute']).toObject()
     }
-
+    console.log("data", data)
     setProject({
       id: data.id,
       title: data.title,
       description: data.description,
-      startDate: startDate?.toFormat('dd/MM/yyyy HH:mm') ?? '-',
-      endDate: endDate?.toFormat('dd/MM/yyyy HH:mm') ?? '-',
+      startDate: startDate?.toFormat("yyyy-MM-dd'T'HH:mm") ?? "",
+      endDate: endDate?.toFormat("yyyy-MM-dd'T'HH:mm") ?? "",
       users: data.users,
       status: data.status,
       timePast: {
@@ -90,8 +90,8 @@ export function PageProjectView() {
         hours: dateExpectedDate?.hours || 0,
         minutes: dateExpectedDate?.minutes?.toFixed(0) || 0,
       },
-      deliveryDate: deliveryDate?.toFormat('dd/MM/yyyy') || "-",
-      expectedDate: expectedDate?.toFormat('dd/MM/yyyy') || "-"
+      deliveryDate: deliveryDate?.toFormat("yyyy-MM-dd'T'HH:mm") || "",
+      expectedDate: expectedDate?.toFormat("yyyy-MM-dd'T'HH:mm") || ""
     })
   }
 
@@ -104,16 +104,27 @@ export function PageProjectView() {
     modal.show()
   }
 
-  async function setStartDate() {
-    await api.put(`/projects/${id}`, { startDate: DateTime.local().toFormat("yyyy-MM-dd HH:mm") })
-    reload()
+
+  function change(key, value) {
+    setProject({
+      ...project,
+      [key]: value
+    })
   }
 
-  async function setEndDate() {
-    await api.put(`/projects/${id}`, { endDate: DateTime.local().toFormat("yyyy-MM-dd HH:mm")   })
-    reload()
-  }
+  async function updated() {
+    const data = {
+      ...project,
+      startDate: project.startDate?.split('T').join(" "),
+      endDate: project.endDate?.split('T').join(" "),
+      expectedDate: project.expectedDate?.split('T').join(" "),
+      deliveryDate: project.deliveryDate?.split('T').join(" "),
+    }
 
+    await api.put(`/projects/${id}`, data)
+
+    alert("Atualizado com sucesso!")
+  }
 
   return (
     <>
@@ -179,22 +190,26 @@ export function PageProjectView() {
 
               <div className="text-muted mt-3">
                 <p className="text-sm mt-2">Status
-                  <b className="d-block">{project.status}</b>
+                  <b className="d-block"></b>
+                  <select className="form-select form-select-sm" onChange={(e) => change('status', e.target.value)} value={project.status}>
+                    <option value="draft">Rascunho</option>
+                    <option value="published">Publicado</option>
+                  </select>
                 </p>
 
                 <p className="text-sm mt-2">Inicio
-                  <b className="d-block">{project.startDate}</b>
+                  <input className="form-control form-control-sm me-2" type="datetime-local" value={project.startDate} onChange={(e) => change('startDate', e.target.value)} />
                 </p>
                 <p className="text-sm mt-2">Fim
-                  <b className="d-block">{project.endDate}</b>
+                  <input className="form-control form-control-sm me-2" type="datetime-local" value={project.endDate} onChange={(e) => change('endDate', e.target.value)} />
                 </p>
 
                 <p className="text-sm mt-2">Data de Entrega
-                  <b className="d-block">{project.deliveryDate}</b>
+                  <input className="form-control form-control-sm me-2" type="datetime-local" value={project.deliveryDate} onChange={(e) => change('deliveryDate', e.target.value)} />
                 </p>
 
                 <p className="text-sm mt-2">Data Prevista de Entrega
-                  <b className="d-block">{project.expectedDate}</b>
+                  <input className="form-control form-control-sm me-2" type="datetime-local" value={project.expectedDate} onChange={(e) => change('expectedDate', e.target.value)} />
                 </p>
               </div>
 
@@ -215,9 +230,8 @@ export function PageProjectView() {
                 </table>
               </div>
               <div className="mt-3 mb-3">
-                <button className="btn btn-sm btn-success" style={{ marginRight: 5 }} onClick={setStartDate}>Iniciar Projeto</button>
-                <button className="btn btn-sm btn-danger" style={{ marginRight: 5 }} onClick={setEndDate}>Finalizar Projeto</button>
-                <button className="btn btn-sm btn-primary" style={{ marginRight: 5 }} onClick={openModalTaskEdit}>Editar</button>
+                <button className="btn btn-sm btn-dark" style={{ marginRight: 5 }} onClick={openModalTaskEdit}>Editar</button>
+                <button className="btn btn-sm btn-success" style={{ marginRight: 5 }} onClick={updated}>Salvar Alterações</button>
               </div>
             </div>
           </div>

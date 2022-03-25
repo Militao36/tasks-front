@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import { api } from "../config/api";
 import ProjectService from "../services/ProjectService";
 
 function useProject(id) {
@@ -8,9 +9,6 @@ function useProject(id) {
     title: "",
     description: "",
     users: [],
-    deliveryDate: "",
-    expectedDate: "",
-    status: ""
   })
 
   function addUser(user = []) {
@@ -60,12 +58,22 @@ function useProject(id) {
     })
   }
 
+  async function removeUserOfProject(id) {
+    await api.delete(`/projects/${project.id}/${id}`)
+      .finally(() => {
+        setProject({
+          ...project,
+          users: project.users.filter(user => user.id !== id)
+        })
+      })
+  }
+
   useEffect(() => {
     findById()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project.id])
 
-  return [setProject, project, addUser, createOrUpdated]
+  return [setProject, project, addUser, createOrUpdated, removeUserOfProject]
 }
 
 export { useProject }
