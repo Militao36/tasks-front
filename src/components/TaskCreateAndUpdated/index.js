@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { api } from '../../config/api'
 import { useUsers } from '../../hooks/useUsers'
 import { Editor } from '../Editor'
@@ -6,6 +7,7 @@ import { Modal } from '../Modal'
 
 
 export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () => { } }) {
+  const navigation = useNavigate()
   const [users] = useUsers()
 
   const [task, setTask] = useState({
@@ -28,20 +30,34 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
 
 
   async function save() {
-    await api.post(`/tasks`, {
-      ...task,
-      projectId: projectId,
-      listId: listId
-    })
+    try {
+      await api.post(`/tasks`, {
+        ...task,
+        projectId: projectId,
+        listId: listId
+      })
+    } catch (error) {
+      if (error.response.status === 403) {
+        alert("Você não tem permissão para acessar esse board, iremos te direcionar para a página inicial")
+        navigation('/home')
+      }
+    }
 
   }
 
   async function update() {
-    await api.put(`/tasks/${task.id}`, {
-      ...task,
-      projectId: projectId,
-      listId: listId
-    })
+    try {
+      await api.put(`/tasks/${task.id}`, {
+        ...task,
+        projectId: projectId,
+        listId: listId
+      })
+    } catch (error) {
+      if (error.response.status === 403) {
+        alert("Você não tem permissão para acessar esse board, iremos te direcionar para a página inicial")
+        navigation('/home')
+      }
+    }
   }
 
   async function handle() {
@@ -54,8 +70,15 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
   }
 
   async function getTask(id) {
-    const { data } = await api.get(`/tasks/${id}`)
-    setTask(data)
+    try {
+      const { data } = await api.get(`/tasks/${id}`)
+      setTask(data)
+    } catch (error) {
+      if (error.response.status === 403) {
+        alert("Você não tem permissão para acessar esse board, iremos te direcionar para a página inicial")
+        navigation('/home')
+      }
+    }
   }
 
   return (

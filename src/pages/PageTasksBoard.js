@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { CreateList } from '../components/CreateList';
 import { Menu } from '../components/Menu';
 import { TaskCard } from '../components/TaskCard';
@@ -9,6 +9,8 @@ import { api } from '../config/api';
 
 
 export function PageTasksBoard() {
+  const navigation = useNavigate()
+
   const { projectId } = useParams();
 
   const [tasks, setTasks] = useState([])
@@ -28,17 +30,26 @@ export function PageTasksBoard() {
   }, [projectId])
 
   async function listTasks() {
-    const response = await api.get(`/lists?projectId=${projectId}`)
-    const data = response.data || []
 
-    const getTasks = await api.get(`/tasks?projectId=${projectId}`)
+    try {
+      const response = await api.get(`/lists?projectId=${projectId}`)
+      const data = response.data || []
 
-    const lists = data.map((value) => {
-      value.tasks = getTasks.data.filter((task) => task.listId === value.id)
-      return value
-    })
+      const getTasks = await api.get(`/tasks?projectId=${projectId}`)
 
-    setTasks(lists)
+      const lists = data.map((value) => {
+        value.tasks = getTasks.data.filter((task) => task.listId === value.id)
+        return value
+      })
+
+      setTasks(lists)
+    } catch (error) {
+      if (error.response.status === 403) {
+        alert("Você não tem permissão para acessar esse board, iremos te direcionar para a página inicial")
+        navigation('/home')
+      }
+    }
+
   }
 
   async function move(type, listId) {
@@ -51,9 +62,9 @@ export function PageTasksBoard() {
     setIdTaskMove("")
   }
 
-  function createTask(id) {
-    setTaskId("")
-    setListId(id)
+  function createTask(id_task, list_id) {
+    setTaskId(id_task)
+    setListId(list_id)
     const modal = new window.bootstrap.Modal(document.getElementById('create-task-of-modal'))
     modal.show()
   }
@@ -118,7 +129,7 @@ export function PageTasksBoard() {
                             border: "5px solid #343a40",
                             setIdTaskMove: setIdTaskMove,
                             click: () => viewTask(task.id),
-                            edit: () => createTask(task.id),
+                            edit: () => createTask(task.id, task.listId),
                             listProps: listProps,
                             setlistProps: setlistProps
                           }

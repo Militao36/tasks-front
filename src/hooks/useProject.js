@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { api } from "../config/api";
 import ProjectService from "../services/ProjectService";
 
 function useProject(id) {
+  const navigation = useNavigate()
+
   const [project, setProject] = useState({
     id: id,
     title: "",
@@ -47,15 +50,21 @@ function useProject(id) {
     }
 
     const data = await ProjectService.findById(project.id)
-    setProject({
-      id: data.id,
-      title: data.title,
-      description: data.description,
-      deliveryDate: data.deliveryDate ? String(data.deliveryDate).substring(0, 10) : "",
-      expectedDate: String(data.expectedDate).substring(0, 10),
-      status: data.status,
-      users: data.users
-    })
+
+    if (data === 403) {
+      alert("Você não tem permissão para acessar esse projeto, iremos te direcionar para a página inicial")
+      navigation('/home')
+    } else {
+      setProject({
+        id: data.id,
+        title: data.title,
+        description: data.description,
+        deliveryDate: data.deliveryDate ? String(data.deliveryDate).substring(0, 10) : "",
+        expectedDate: String(data.expectedDate).substring(0, 10),
+        status: data.status,
+        users: data.users
+      })
+    }
   }
 
   async function removeUserOfProject(id) {

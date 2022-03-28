@@ -2,7 +2,7 @@
 import { DateTime } from 'luxon';
 import './style.css';
 
-export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove, home = false } }) {
+export function TaskCard({ task: { id, user, title, startDate = '', endDate = '', click, setIdTaskMove, edit, home = false,  } }) {
   const style = {
     marginLeft: "2px",
     backgroundColor: '#f8f9fa',
@@ -23,6 +23,12 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
               <li className="dropdown-item" onClick={() => setIdTaskMove(id)}>
                 Mover <i className="fa-solid fa-arrows-up-down-left-right"></i>
               </li>
+              <li>
+                <hr className="dropdown-divider" />
+              </li>
+              <li className="dropdown-item" onClick={edit}>
+                Editar
+              </li>
             </ul>
           </div>
         }
@@ -31,12 +37,12 @@ export function TaskCard({ task: { id, user, title, startDate = '', endDate = ''
         <p style={{ fontSize: 14 }}>
           {title}
         </p>
-        <span style={{ textDecoration: 'none', fontSize: 10, color: 'black', fontFamily: 'monospace' }}>
+        <a style={{ textDecoration: 'none', fontSize: 10, color: 'black', fontFamily: 'monospace' }}>
           {startDate ? "Inicio: " + DateTime.fromISO(startDate).toFormat('dd/MM/yyyy') : "Aguardando"}
-        </span>
-        <span className='ms-2' style={{ textDecoration: 'none', fontSize: 10, color: 'black' }}>
+        </a>
+        <a className='ms-2' style={{ textDecoration: 'none', fontSize: 10, color: 'black' }}>
           {endDate ? "Fim: " + DateTime.fromISO(endDate).toFormat('dd/MM/yyyy') : null}
-        </span>
+        </a>
       </div>
     </div>
   )

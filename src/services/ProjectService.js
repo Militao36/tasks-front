@@ -2,9 +2,12 @@ import { api } from "../config/api"
 
 class ProjectService {
   async findById(id) {
-    const { data } = await api.get(`/projects/${id}`)
-
-    return data
+    try {
+      const response = await api.get(`/projects/${id}`)
+      return response.data
+    } catch (error) {
+      return error.response.status
+    }
   }
 
   async create(body) {
@@ -22,7 +25,7 @@ class ProjectService {
     const body = {
       comment: message,
     }
-    
+
     if (type === 'project') {
       body['projectId'] = id
     } else {
