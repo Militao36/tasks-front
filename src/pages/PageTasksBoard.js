@@ -83,7 +83,7 @@ export function PageTasksBoard() {
     modal.show()
   }
 
-  async function reload() {
+  async function reload(limparTaskIdAndListId = false) {
     await listTasks()
     setTaskId("")
     setListId("")
@@ -113,13 +113,16 @@ export function PageTasksBoard() {
                 <div key={value.id}>
                   <div className="bg-success text-white rounded d-flex justify-content-between" style={{ height: 40 }}>
                     <h5 style={{ paddingTop: 5 }}><i className="fa-solid fa-chevron-right" style={{ padding: 5 }}></i>   {value.title}</h5>
-                    <button className="btn btn-sm btn-dark"
-                      onClick={() => createList(value.id)}>
-                      <i className="fa-solid fa-pen-to-square"></i>
-                    </button>
-                    <i className="fa-solid fa-square-plus me-2"
-                      style={{ cursor: 'pointer' }}
-                      onClick={() => createTask("", value.id)}></i>
+                    <div style={{ padding: 5 }}>
+                      <button className="btn btn-sm btn-dark me-1"
+                        onClick={() => createList(value.id)}>
+                        <i className="fa-solid fa-pen-to-square"></i>
+                      </button>
+                      <button className="btn btn-sm btn-dark"
+                        onClick={() => createTask("", value.id)}>
+                        <i className="fa-solid fa-square-plus" style={{ cursor: 'pointer' }}></i>
+                      </button>
+                    </div>
                   </div>
                   <Card key={value.id}>
                     <TablesBoard

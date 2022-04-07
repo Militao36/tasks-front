@@ -6,12 +6,12 @@ import { Editor } from '../Editor'
 import { Modal } from '../Modal'
 
 
-export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () => { } }) {
+export function TaskCreateAndUpdated({ projectId, listId, idTask, reload }) {
   const navigation = useNavigate()
   const [users] = useUsers()
 
   const [task, setTask] = useState({
-    id: "",
+    id: idTask,
     title: "",
     branch: "",
     userId: "",
@@ -22,8 +22,8 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
   })
 
   useEffect(() => {
-    if (idTask) {
-      getTask(idTask)
+    if (task.id) {
+      getTask(task.id)
     } else {
       setTask({
         id: "",
@@ -32,8 +32,8 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
         userId: "",
         deliveryDate: "",
         description: "",
-        projectId: "",
-        listId: ""
+        projectId: projectId,
+        listId: listId
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -46,18 +46,32 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
         return alert("A tarefa deve ser adicionada a um lista.")
       }
 
-      await api.post(`/tasks`, {
+      const response = await api.post(`/tasks`, {
         ...task,
         projectId: projectId,
         listId: listId
       })
+
+      if (response.status === 200) {
+        setTask({
+          ...task,
+          id: response.data.id
+        })
+      }
     } catch (error) {
       if (error.response.status === 403) {
         alert("Você não tem permissão para acessar esse board, iremos te direcionar para a página inicial")
         navigation('/home')
+        return
       }
-    }
 
+      if (error.response.status === 400) {
+        alert("Este titulo está sendo usado por outra tarefa")
+        return
+      }
+
+      alert("Ocorreu um erro ao salvar a tarefa, tente novamente.")
+    }
   }
 
   async function update() {
@@ -81,7 +95,7 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
     } else {
       await update()
     }
-    await reload()
+    await reload(false)
   }
 
   async function getTask(id) {
