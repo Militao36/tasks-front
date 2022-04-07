@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { Card } from '../components/Card';
 import { CreateList } from '../components/CreateList';
 import { Menu } from '../components/Menu';
+import { TablesBoard } from '../components/TableBoard';
 import { TaskCard } from '../components/TaskCard';
 import { TaskCreateAndUpdated } from '../components/TaskCreateAndUpdated';
 import { TasksView } from '../components/TasksView';
@@ -30,7 +32,6 @@ export function PageTasksBoard() {
   }, [projectId])
 
   async function listTasks() {
-
     try {
       const response = await api.get(`/lists?projectId=${projectId}`)
       const data = response.data || []
@@ -63,8 +64,9 @@ export function PageTasksBoard() {
   }
 
   function createTask(id_task, list_id) {
-    setTaskId(id_task)
-    setListId(list_id)
+    setTaskId(state => state = id_task)
+    setListId(state => state = list_id)
+
     const modal = new window.bootstrap.Modal(document.getElementById('create-task-of-modal'))
     modal.show()
   }
@@ -75,72 +77,62 @@ export function PageTasksBoard() {
     modal.show()
   }
 
+  function createList(list_id) {
+    setListId(state => state = list_id)
+    const modal = new window.bootstrap.Modal(document.getElementById('create-list-of-modal'))
+    modal.show()
+  }
+
   async function reload() {
     await listTasks()
+    setTaskId("")
+    setListId("")
   }
 
   return (
     <>
       <Menu />
-      <div className="container-fluid" style={{ backgroundColor: '#f4f6f9', }}>
+      <div className="container-fluid">
         <div className="d-flex justify-content-between">
           <div className="mt-2">
             <h3>Tasks Board</h3>
           </div>
           <div className="d-none d-sm-block mt-2">
             <button className="btn btn-sm btn-success"
-              data-bs-toggle="modal" data-bs-target="#create-list-of-modal"
-              style={{ marginLeft: 20 }}>
+              onClick={() => createList("")} style={{ marginLeft: 20 }}>
               <i className="fa-solid fa-plus me-2"></i>
               New List
             </button>
           </div>
         </div>
 
-        <div className='board d-flex overflow-auto mb-1' style={{ width: '99%', height: '100vh', marginLeft: 10, marginRight: 10 }}>
-          {tasks.map((value) => {
-            return (
-              <div key={value.id} className="card me-2" style={{ minWidth: 300, width: 300, border: 'none', height: '100vh' }} >
-                <div className="card-header bg-primary text-white d-flex justify-content-between align-items-center" style={{ borderRadius: '5px 5px 0 0' }}>
-
-                  <button className="btn btn-sm btn-primary"
-                    data-bs-toggle="modal" data-bs-target="#create-list-of-modal"
-                    onClick={() => setListId(value.id)}>
-                    <i className="fa-solid fa-pen-to-square"></i>
-                  </button>
-                  {
-                    (idTaskMove && value.tasks.filter(v => v.id === idTaskMove).length === 0)
-                    &&
-                    <i className="fa-solid fa-caret-down" style={{ cursor: 'pointer' }} onClick={() => move(value.title, value.id)}></i>
-                  }
-                  <p>{value.title}</p>
-                  <i className="fa-solid fa-square-plus me-2"
-                    style={{ cursor: 'pointer' }}
-                    onClick={() => createTask(value.id)}></i>
+        <div className='row'>
+          <div className='col-sm-6'>
+            {tasks.map((value) => {
+              return (
+                <div key={value.id}>
+                  <div className="bg-success text-white rounded d-flex justify-content-between" style={{ height: 40 }}>
+                    <h5 style={{ paddingTop: 5 }}><i className="fa-solid fa-chevron-right" style={{ padding: 5 }}></i>   {value.title}</h5>
+                    <button className="btn btn-sm btn-dark"
+                      onClick={() => createList(value.id)}>
+                      <i className="fa-solid fa-pen-to-square"></i>
+                    </button>
+                    <i className="fa-solid fa-square-plus me-2"
+                      style={{ cursor: 'pointer' }}
+                      onClick={() => createTask("", value.id)}></i>
+                  </div>
+                  <Card key={value.id}>
+                    <TablesBoard
+                      listName={""}
+                      tasks={value.tasks}
+                      viewTask={viewTask}
+                      createTask={createTask}
+                    />
+                  </Card>
                 </div>
-                <div className="card-body overflow-auto mb-2" style={{ backgroundColor: '#f0f0f1' }}>
-                  {value.tasks.map((task) => {
-                    return (
-                      <TaskCard
-                        key={task.id}
-                        task={
-                          {
-                            ...task,
-                            border: "5px solid #343a40",
-                            setIdTaskMove: setIdTaskMove,
-                            click: () => viewTask(task.id),
-                            edit: () => createTask(task.id, task.listId),
-                            listProps: listProps,
-                            setlistProps: setlistProps
-                          }
-                        }
-                      />
-                    )
-                  })}
-                </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </div >
       <CreateList projectId={projectId} idList={listId} reload={reload} />

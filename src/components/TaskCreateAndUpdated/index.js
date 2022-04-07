@@ -24,13 +24,28 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
   useEffect(() => {
     if (idTask) {
       getTask(idTask)
+    } else {
+      setTask({
+        id: "",
+        title: "",
+        branch: "",
+        userId: "",
+        deliveryDate: "",
+        description: "",
+        projectId: "",
+        listId: ""
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [idTask, projectId, listId])
 
 
   async function save() {
     try {
+      if (!projectId || !listId) {
+        return alert("A tarefa deve ser adicionada a um lista.")
+      }
+
       await api.post(`/tasks`, {
         ...task,
         projectId: projectId,
@@ -61,7 +76,7 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
   }
 
   async function handle() {
-    if (task.id === "") {
+    if (!task?.id) {
       await save()
     } else {
       await update()
@@ -72,7 +87,11 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
   async function getTask(id) {
     try {
       const { data } = await api.get(`/tasks/${id}`)
-      setTask(data)
+
+      setTask({
+        ...data,
+        deliveryDate: data.deliveryDate || ''
+      })
     } catch (error) {
       if (error.response.status === 403) {
         alert("Você não tem permissão para acessar esse board, iremos te direcionar para a página inicial")
@@ -123,7 +142,7 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload = () =>
               </div>
             </div>
             <div className='col-sm-3'>
-              <label htmlFor="">Previsão de Entrega</label>
+              <label htmlFor="">Data de Entrega</label>
               <input
                 className="form-control form-control-sm"
                 type="date"

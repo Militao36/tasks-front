@@ -78,7 +78,7 @@ export function Comments({ id, type }) {
           return (
             <div key={value.id}>
               <div className="d-flex justify-content-between mt-2">
-                <span style={{ fontSize: 18 }}>{value.user.username}</span>
+                <span style={{ fontSize: 18 }}>{value?.user?.username}</span>
                 <b className="text-muted" style={{ fontSize: 12 }}>
                   {value.createdAt}
                 </b>

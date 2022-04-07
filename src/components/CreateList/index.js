@@ -54,6 +54,11 @@ export function CreateList({ projectId, idList, reload = () => { } }) {
   useEffect(() => {
     if (idList) {
       findById()
+    } else {
+      setList({
+        id: "",
+        title: ""
+      })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idList])

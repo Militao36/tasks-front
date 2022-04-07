@@ -1,5 +1,6 @@
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 import { api } from "../../config/api";
 import { useUsers } from "../../hooks/useUsers";
 import { Card } from "../Card";
@@ -9,6 +10,8 @@ import { Modal } from "../Modal";
 
 
 export function TasksView({ taskId, reload = () => { } }) {
+  const { projectId } = useParams();
+
   const [users] = useUsers()
 
   const [tasks, setTasks] = useState({
@@ -104,6 +107,7 @@ export function TasksView({ taskId, reload = () => { } }) {
   async function update() {
     await api.put(`/tasks/${tasks.id}`, {
       ...tasks,
+      projectId,
       startDate: tasks.startDate?.split("T").join(" ") || null,
       endDate: tasks.endDate?.split("T").join(" ") || null,
       deliveryDate: tasks.deliveryDate?.split("T").join(" ") || null,
@@ -141,10 +145,7 @@ export function TasksView({ taskId, reload = () => { } }) {
                   </div>
                 </div>
                 <div className="mt-4">
-                  <h2>{tasks.description}</h2>
-                </div>
-                <div className="mt-4">
-                  <Editor />
+                  <Editor value={tasks.description} />
                   <hr />
                   <Comments id={taskId} type={"task"} />
                 </div>
