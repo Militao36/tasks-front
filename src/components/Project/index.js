@@ -6,7 +6,7 @@ import { useProject } from '../../hooks/useProject'
 import { Editor } from '../Editor'
 import { Card } from '../Card'
 
-export function ProjectCreateAndUpdated({ id, reload = () => { } }) {
+export function ProjectCreateAndUpdated({ id, reload }) {
   const [users] = useUsers()
   const [setProject, project, addUser, createOrUpdated, removeUserOfProject] = useProject(id)
 
