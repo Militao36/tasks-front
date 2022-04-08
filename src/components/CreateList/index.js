@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { api } from "../../config/api";
 import { Modal } from "../Modal";
 
-export function CreateList({ projectId, idList, reload = () => { } }) {
+export function CreateList({ projectId, idList, reload }) {
   const [list, setList] = useState({
     id: "",
     title: "",
@@ -40,7 +40,11 @@ export function CreateList({ projectId, idList, reload = () => { } }) {
     } else {
       await save()
     }
-    await reload()
+    await reload(false)
+    setList({
+      id: '',
+      title: ''
+    })
   }
 
   async function findById() {

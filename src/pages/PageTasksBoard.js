@@ -4,7 +4,6 @@ import { Card } from '../components/Card';
 import { CreateList } from '../components/CreateList';
 import { Menu } from '../components/Menu';
 import { TablesBoard } from '../components/TableBoard';
-import { TaskCard } from '../components/TaskCard';
 import { TaskCreateAndUpdated } from '../components/TaskCreateAndUpdated';
 import { TasksView } from '../components/TasksView';
 import { api } from '../config/api';
@@ -20,10 +19,6 @@ export function PageTasksBoard() {
   const [listId, setListId] = useState("")
 
   const [taskId, setTaskId] = useState("")
-
-  const [idTaskMove, setIdTaskMove] = useState("")
-
-  const [listProps, setlistProps] = useState(false)
 
 
   useEffect(() => {
@@ -53,16 +48,6 @@ export function PageTasksBoard() {
 
   }
 
-  async function move(type, listId) {
-    if (!idTaskMove) {
-      return
-    }
-
-    await api.post('/tasks/task/move', { type, listId, taskId: idTaskMove })
-    listTasks()
-    setIdTaskMove("")
-  }
-
   function createTask(id_task, list_id) {
     setTaskId(state => state = id_task)
     setListId(state => state = list_id)
@@ -85,8 +70,12 @@ export function PageTasksBoard() {
 
   async function reload(limparTaskIdAndListId = false) {
     await listTasks()
-    setTaskId("")
-    setListId("")
+
+    if (limparTaskIdAndListId === true) {
+      setTaskId("")
+      setListId("")
+    }
+
   }
 
   return (
@@ -106,8 +95,8 @@ export function PageTasksBoard() {
           </div>
         </div>
 
-        <div className='row'>
-          <div className='col-sm-6'>
+        <div className='container'>
+          <div className='col-sm-12'>
             {tasks.map((value) => {
               return (
                 <div key={value.id}>

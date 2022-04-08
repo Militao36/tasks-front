@@ -9,10 +9,12 @@ import { Editor } from "../Editor";
 import { Modal } from "../Modal";
 
 
-export function TasksView({ taskId, reload = () => { } }) {
+export function TasksView({ taskId, reload }) {
   const { projectId } = useParams();
 
   const [users] = useUsers()
+
+  const [lists, setLists] = useState([])
 
   const [tasks, setTasks] = useState({
     id: taskId,
@@ -23,6 +25,7 @@ export function TasksView({ taskId, reload = () => { } }) {
     endDate: "",
     deliveryDate: "",
     userId: "",
+    listId: "",
     user: {
       id: "",
       username: ""
@@ -41,8 +44,10 @@ export function TasksView({ taskId, reload = () => { } }) {
 
   useEffect(() => {
     if (taskId) {
+      getLists()
       getTask(taskId)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [taskId])
 
   const getTask = async (id) => {
@@ -83,6 +88,7 @@ export function TasksView({ taskId, reload = () => { } }) {
       endDate: endDate?.toFormat("yyyy-MM-dd'T'HH:mm") || "",
       userId: data.userId,
       deliveryDate: deliveryDate?.toFormat("yyyy-MM-dd'T'HH:mm") || "",
+      listId: data.listId,
       timePast: {
         days: timePast?.days || 0,
         hours: timePast?.hours || 0,
@@ -95,6 +101,13 @@ export function TasksView({ taskId, reload = () => { } }) {
       }
     })
 
+  }
+
+  async function getLists() {
+    const response = await api.get(`/lists?projectId=${projectId}`)
+    const data = response.data || []
+
+    setLists(data)
   }
 
   function change(key, value) {
@@ -112,7 +125,7 @@ export function TasksView({ taskId, reload = () => { } }) {
       endDate: tasks.endDate?.split("T").join(" ") || null,
       deliveryDate: tasks.deliveryDate?.split("T").join(" ") || null,
     })
-    await reload()
+    await reload(false)
   }
 
   return (
@@ -178,6 +191,15 @@ export function TasksView({ taskId, reload = () => { } }) {
                       {users.map((user) => {
                         return (
                           <option key={user.id} value={user.id}>{user.username}</option>
+                        )
+                      })}
+                    </select>
+                  </p>
+                  <p className="text-sm mt-2">Listas:
+                    <select className="form-select form-select-sm" onChange={(e) => change('listId', e.target.value)} value={tasks.listId}>
+                      {lists.map((list) => {
+                        return (
+                          <option key={list.id} value={list.id}>{list.title}</option>
                         )
                       })}
                     </select>

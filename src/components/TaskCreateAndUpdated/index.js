@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon'
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../config/api'
@@ -22,8 +23,8 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload }) {
   })
 
   useEffect(() => {
-    if (task.id) {
-      getTask(task.id)
+    if (idTask) {
+      getTask(idTask)
     } else {
       setTask({
         id: "",
@@ -90,6 +91,10 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload }) {
   }
 
   async function handle() {
+    if (task.title === "") {
+      return alert("O titulo da tarefa não pode ser vazio")
+    }
+
     if (!task?.id) {
       await save()
     } else {
@@ -101,10 +106,9 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload }) {
   async function getTask(id) {
     try {
       const { data } = await api.get(`/tasks/${id}`)
-
       setTask({
         ...data,
-        deliveryDate: data.deliveryDate || ''
+        deliveryDate: data.deliveryDate ? DateTime.fromISO(data.deliveryDate).toSQLDate() : ''
       })
     } catch (error) {
       if (error.response.status === 403) {
@@ -112,6 +116,20 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload }) {
         navigation('/home')
       }
     }
+  }
+
+
+  function newTask() {
+    setTask({
+      id: "",
+      title: "",
+      branch: "",
+      userId: "",
+      deliveryDate: "",
+      description: "",
+      projectId: projectId,
+      listId: listId
+    })
   }
 
   return (
@@ -177,6 +195,7 @@ export function TaskCreateAndUpdated({ projectId, listId, idTask, reload }) {
           </div>
           <div className='col-sm-12 d-flex justify-content-end mt-3'>
             <button className='btn btn-sm btn-success' onClick={() => handle()}>Salvar informações</button>
+            <button className='btn btn-sm btn-primary ms-2' onClick={() => newTask()}>Nova</button>
           </div>
         </div>
       </div>

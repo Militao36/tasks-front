@@ -19,7 +19,7 @@ export function TablesBoard({ listName, tasks = [], viewTask, createTask }) {
               return (
                 <tr key={task.id} >
                   <td><b>{task.user.username}</b></td>
-                  <td>{String(task.title).substring(0, 20).concat(" ...")}</td>
+                  <td>{task.title}</td>
                   <td>
                     {task.startDate ? DateTime.fromISO(task.startDate).toFormat('dd/MM/yyyy HH:mm') : "Aguardando"}
                   </td>
