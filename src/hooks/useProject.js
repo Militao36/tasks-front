@@ -68,13 +68,21 @@ function useProject(id) {
   }
 
   async function removeUserOfProject(id) {
-    await api.delete(`/projects/${project.id}/${id}`)
-      .finally(() => {
-        setProject({
-          ...project,
-          users: project.users.filter(user => user.id !== id)
+    try {
+      await api.delete(`/projects/${project.id}/${id}`)
+        .then(() => {
+          setProject({
+            ...project,
+            users: project.users.filter(user => user.id !== id)
+          })
         })
-      })
+    } catch (error) {
+      if (error.response.status === 400) {
+        return alert(error.response.data.message)
+      }
+
+      return alert("Erro ao deletar usuário.")
+    }
   }
 
   useEffect(() => {

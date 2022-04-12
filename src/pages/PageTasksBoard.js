@@ -95,11 +95,11 @@ export function PageTasksBoard() {
           </div>
         </div>
 
-        <div className='container'>
-          <div className='col-sm-12'>
+        <div className='container-fluid overflow-auto' style={{ maxWidth: '100vw', height: '89vh' }}>
+          <div className='d-flex'>
             {tasks.map((value) => {
               return (
-                <div key={value.id}>
+                <div style={{ flex: 1, margin: 10 }}>
                   <div className="bg-success text-white rounded d-flex justify-content-between" style={{ height: 40 }}>
                     <h5 style={{ paddingTop: 5 }}><i className="fa-solid fa-chevron-right" style={{ padding: 5 }}></i>   {value.title}</h5>
                     <div style={{ padding: 5 }}>
@@ -113,15 +113,18 @@ export function PageTasksBoard() {
                       </button>
                     </div>
                   </div>
-                  <Card key={value.id}>
-                    <TablesBoard
-                      listName={""}
-                      tasks={value.tasks}
-                      viewTask={viewTask}
-                      createTask={createTask}
-                    />
-                  </Card>
+                  <div key={value.id} style={{ maxHeight: 500, width: 500, overflow: 'auto', padding: 10 }}>
+                    <Card key={value.id}>
+                      <TablesBoard
+                        listName={""}
+                        tasks={value.tasks}
+                        viewTask={viewTask}
+                        createTask={createTask}
+                      />
+                    </Card>
+                  </div>
                 </div>
+
               )
             })}
           </div>
